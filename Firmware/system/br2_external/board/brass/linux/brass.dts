@@ -8,45 +8,16 @@
 		#size-cells = <1>;
 		compatible = "simple-bus";
 		ranges ;
-		axi_dynclk_0: axi_dynclk@43c10000 {
-			/* This is a place holder node for a custom IP, user may need to update the entries */
-			clock-names = "REF_CLK_I", "s00_axi_aclk";
-			clocks = <&clkc 15>, <&clkc 15>;
-			compatible = "xlnx,axi-dynclk-1.0";
-			reg = <0x43c10000 0x10000>;
-			xlnx,s00-axi-addr-width = <0x5>;
-			xlnx,s00-axi-data-width = <0x20>;
+
+		framebuffer {
+			compatible = "r1cbu,vdmafb";
+			reg = <	0x43c10000 0x10000
+					0x43000000 0x10000>;
+			debug = <0>;
+			width = <800>;
+			height = <480>;
 		};
-		axi_vdma_0: dma@43000000 {
-			#dma-cells = <1>;
-			clock-names = "s_axi_lite_aclk", "m_axi_mm2s_aclk", "m_axis_mm2s_aclk";
-			clocks = <&clkc 15>, <&clkc 16>, <&clkc 16>;
-			compatible = "xlnx,axi-vdma-6.3", "xlnx,axi-vdma-1.00.a";
-			interrupt-names = "mm2s_introut";
-			interrupt-parent = <&intc>;
-			interrupts = <0 30 4>;
-			reg = <0x43000000 0x10000>;
-			xlnx,addrwidth = <0x20>;
-			xlnx,flush-fsync = <0x1>;
-			xlnx,num-fstores = <0x1>;
-			dma-channel@43000000 {
-				compatible = "xlnx,axi-vdma-mm2s-channel";
-				interrupts = <0 30 4>;
-				xlnx,datawidth = <0x18>;
-				xlnx,device-id = <0x0>;
-				xlnx,include-dre ;
-			};
-		};
-		v_tc_0: v_tc@43c00000 {
-			clock-names = "clk", "s_axi_aclk";
-			clocks = <&misc_clk_0>, <&clkc 15>;
-			compatible = "xlnx,v-tc-6.2", "xlnx,v-tc-6.1";
-			interrupt-names = "irq";
-			interrupt-parent = <&intc>;
-			interrupts = <0 29 4>;
-			reg = <0x43c00000 0x10000>;
-			xlnx,generator ;
-		};
+
 		misc_clk_0: misc_clk_0 {
 			#clock-cells = <0>;
 			clock-frequency = <100000000>;
@@ -62,26 +33,32 @@
 		};
 	};
 };
+
 &gem0 {
 	phy-mode = "rgmii-id";
 	xlnx,ptp-enet-clock = <0x79dbbf3>;
+	local-mac-address = [46 28 FA DA 2F 4B];
 	status = "okay";
 };
+
 &gpio0 {
 	emio-gpio-width = <64>;
 	gpio-mask-high = <0x0>;
 	gpio-mask-low = <0x5600>;
 	status = "okay";
 };
+
 &i2c0 {
 	clock-frequency = <400000>;
 	status = "okay";
 };
+
 &intc {
 	num_cpus = <2>;
 	num_interrupts = <96>;
 	status = "okay";
 };
+
 &qspi {
 	is-dual = <0>;
 	num-cs = <1>;
@@ -89,23 +66,27 @@
 	spi-tx-bus-width = <4>;
 	status = "okay";
 };
+
 &sdhci0 {
 	status = "okay";
 	xlnx,has-cd = <0x1>;
 	xlnx,has-power = <0x0>;
 	xlnx,has-wp = <0x0>;
 };
+
 &uart1 {
 	cts-override ;
 	device_type = "serial";
 	port-number = <0>;
 	status = "okay";
 };
+
 &usb0 {
 	phy_type = "ulpi";
 	status = "okay";
 	usb-reset = <&gpio0 46 0>;
 };
+
 &clkc {
 	fclk-enable = <0x3>;
 	ps-clk-frequency = <33333333>;
