@@ -397,7 +397,6 @@ diff -Naur linux-custom.orig/drivers/video/fbdev/vdmafb.c linux-custom/drivers/v
 +
 +/**
 + * Calculate divider value from target divisor.
-+ * Ported from video_display.c in PYNQ source code>
 + */
 +
 +static u32 dynclk_calculate_divider(u32 divisor) {
@@ -422,7 +421,6 @@ diff -Naur linux-custom.orig/drivers/video/fbdev/vdmafb.c linux-custom/drivers/v
 +
 +/**
 + * Calculate divider register value from target divisor.
-+ * Ported from video_display.c in PYNQ source code>
 + */
 +
 +static u32 dynclk_calculate_divider_config(u32 divisor) {
@@ -580,7 +578,7 @@ diff -Naur linux-custom.orig/drivers/video/fbdev/vdmafb.c linux-custom/drivers/v
 +    u32 fbsize = 0;
 +    int rc = 0;
 +
-+    dev_info(&pdev->dev, "Probing PYNQ-Z1 Framebuffer...\n");
++    dev_info(&pdev->dev, "Probing VDMA Framebuffer...\n");
 +
 +    /* Allocate memory to store device information */
 +
