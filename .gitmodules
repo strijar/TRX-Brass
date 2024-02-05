@@ -1,0 +1,3 @@
+[submodule "Firmware/gui"]
+	path = Firmware/gui
+	url = ../brass_gui
