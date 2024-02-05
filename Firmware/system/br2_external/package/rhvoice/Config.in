@@ -1,0 +1,249 @@
+config BR2_PACKAGE_RHVOICE
+	bool "RHVoice"
+	help
+	  RHVoice is a free and open-source speech synthesizer.
+
+	  Initially, RHVoice could speak only Russian. Now it also supports:
+
+	  * American and Scottish English
+	  * Brazilian Portuguese
+	  * Esperanto
+	  * Georgian
+	  * Ukrainian
+	  * Kyrgyz
+	  * Tatar
+	  * Macedonian
+	  * Albanian
+	  * Polish
+
+if BR2_PACKAGE_RHVOICE
+
+menu "Languages"
+
+config BR2_PACKAGE_RHVOICE_ALBANIAN
+	bool "Albanian"
+
+config BR2_PACKAGE_RHVOICE_BRAZILIAN
+	bool "Brazilian"
+
+config BR2_PACKAGE_RHVOICE_CZECH
+	bool "Czech"
+
+config BR2_PACKAGE_RHVOICE_ENGLISH
+	bool "English"
+
+config BR2_PACKAGE_RHVOICE_ESPERANTO
+	bool "Esperanto"
+
+config BR2_PACKAGE_RHVOICE_KYRGYZ
+	bool "Kyrgyz"
+
+config BR2_PACKAGE_RHVOICE_MACEDONIAN
+	bool "Macedonian"
+
+config BR2_PACKAGE_RHVOICE_POLISH
+	bool "Polish"
+
+config BR2_PACKAGE_RHVOICE_RUSSIAN
+	bool "Russian"
+
+config BR2_PACKAGE_RHVOICE_SLOVAK
+	bool "Slovak"
+
+config BR2_PACKAGE_RHVOICE_TATAR
+	bool "Tatar"
+
+config BR2_PACKAGE_RHVOICE_UKRAINIAN
+	bool "Ukrainian"
+
+config BR2_PACKAGE_RHVOICE_UZBEK
+	bool "Uzbek"
+
+endmenu
+
+menu "Voices"
+
+if BR2_PACKAGE_RHVOICE_ALBANIAN
+
+config BR2_PACKAGE_RHVOICE_HANA
+	bool "Hana (sq)"
+
+endif
+
+if BR2_PACKAGE_RHVOICE_BRAZILIAN
+
+config BR2_PACKAGE_RHVOICE_LETICIA
+	bool "Leticia (br)"
+
+endif
+
+if BR2_PACKAGE_RHVOICE_CZECH
+
+config BR2_PACKAGE_RHVOICE_ZDENEK
+	bool "Zdenek (cs)"
+
+endif
+
+if BR2_PACKAGE_RHVOICE_ENGLISH
+
+config BR2_PACKAGE_RHVOICE_ALAN
+	bool "Alan (en)"
+
+config BR2_PACKAGE_RHVOICE_BDL
+	bool "BDL (en)"
+
+config BR2_PACKAGE_RHVOICE_CLB
+	bool "CLB (en)"
+
+config BR2_PACKAGE_RHVOICE_ENGENIY_EN
+	bool "Evgeniy (en)"
+
+config BR2_PACKAGE_RHVOICE_LYUBOV
+	bool "Lyubov (en)"
+
+config BR2_PACKAGE_RHVOICE_SLT
+	bool "SLT (en)"
+
+endif
+
+if BR2_PACKAGE_RHVOICE_ESPERANTO
+
+config BR2_PACKAGE_RHVOICE_SPOMENKA
+	bool "Spomenka (eo)"
+
+endif
+
+if BR2_PACKAGE_RHVOICE_KYRGYZ
+
+config BR2_PACKAGE_RHVOICE_AZAMAT
+	bool "Azamat (kz)"
+
+config BR2_PACKAGE_RHVOICE_NAZGUL
+	bool "Nazgul (kz)"
+
+endif
+
+if BR2_PACKAGE_RHVOICE_MACEDONIAN
+
+config BR2_PACKAGE_RHVOICE_KIKO
+	bool "Kiko (mk)"
+
+config BR2_PACKAGE_RHVOICE_SUZE
+	bool "Suze (mk)"
+
+endif
+
+if BR2_PACKAGE_RHVOICE_POLISH
+
+config BR2_PACKAGE_RHVOICE_ALICJA
+	bool "Alicja (pl)"
+
+config BR2_PACKAGE_RHVOICE_CEZARY
+	bool "Cezary (pl)"
+
+config BR2_PACKAGE_RHVOICE_MICHAL
+	bool "Michal (pl)"
+
+config BR2_PACKAGE_RHVOICE_NATAN
+	bool "Natan (pl)"
+
+endif
+
+if BR2_PACKAGE_RHVOICE_RUSSIAN
+
+config BR2_PACKAGE_RHVOICE_ALEKSANDR_HQ
+	bool "Aleksandr HQ (ru)"
+
+config BR2_PACKAGE_RHVOICE_ALEKSANDR
+	bool "Aleksandr (ru)"
+
+config BR2_PACKAGE_RHVOICE_ANNA
+	bool "Anna (ru)"
+
+config BR2_PACKAGE_RHVOICE_ARINA
+	bool "Arina (ru)"
+
+config BR2_PACKAGE_RHVOICE_ARTEMIY
+	bool "Artemiy (ru)"
+
+config BR2_PACKAGE_RHVOICE_ELENA
+	bool "Elena (ru)"
+
+config BR2_PACKAGE_RHVOICE_EVGENIY_RU
+	bool "Evgeniy (ru)"
+
+config BR2_PACKAGE_RHVOICE_IRINA
+	bool "Irina (ru)"
+
+config BR2_PACKAGE_RHVOICE_MIKHAIL
+	bool "Mikhail (ru)"
+
+config BR2_PACKAGE_RHVOICE_PAVEL
+	bool "Pavel (ru)"
+
+config BR2_PACKAGE_RHVOICE_TATIANA
+	bool "Tatiana (ru)"
+
+config BR2_PACKAGE_RHVOICE_TIMOFEY
+	bool "Timofey (ru)"
+
+config BR2_PACKAGE_RHVOICE_UMKA
+	bool "Umka (ru)"
+
+config BR2_PACKAGE_RHVOICE_VICTORIA
+	bool "Victoria (ru)"
+
+config BR2_PACKAGE_RHVOICE_VITALIY_NG
+	bool "Vitaliy NG (ru)"
+
+config BR2_PACKAGE_RHVOICE_VITALIY
+	bool "Vitaliy (ru)"
+
+config BR2_PACKAGE_RHVOICE_VSEVOLOD
+	bool "Vsevolod (ru)"
+
+config BR2_PACKAGE_RHVOICE_YURIY
+	bool "Yuriy (ru)"
+
+endif
+
+if BR2_PACKAGE_RHVOICE_SLOVAK
+
+config BR2_PACKAGE_RHVOICE_ONDRO
+	bool "Ondro (sk)"
+
+endif
+
+if BR2_PACKAGE_RHVOICE_TATAR
+
+config BR2_PACKAGE_RHVOICE_TALGAT
+	bool "Talgat (tt)"
+
+endif
+
+if BR2_PACKAGE_RHVOICE_UKRAINIAN
+
+config BR2_PACKAGE_RHVOICE_ANATOL
+	bool "Anatol (ua)"
+
+config BR2_PACKAGE_RHVOICE_MARIANNA
+	bool "Marianna (ua)"
+
+config BR2_PACKAGE_RHVOICE_NATALIA
+	bool "Natalia (ua)"
+
+config BR2_PACKAGE_RHVOICE_VOLODYMYR
+	bool "Volodymyr (ua)"
+
+endif
+
+if BR2_PACKAGE_RHVOICE_UZBEK
+
+config BR2_PACKAGE_RHVOICE_SEVINCH
+	bool "Sevinch (uz)"
+
+endif
+
+endmenu
+
+endif

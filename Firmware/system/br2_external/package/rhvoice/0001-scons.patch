@@ -1,0 +1,17 @@
+--- a/SConstruct	2023-11-16 12:42:03.520528233 +0300
++++ b/SConstruct	2023-11-16 12:43:09.288534640 +0300
+@@ -218,6 +218,14 @@
+         env.Append(CPPDEFINES=("NOMINMAX",1))
+     env["libcore"]="RHVoice_core"
+     env["libaudio"]="RHVoice_audio"
++
++    if 'CROSS' in os.environ:
++        cross = os.environ['CROSS']
++        env.Append(CROSS = cross)
++        env.Replace(CC = cross + 'gcc')
++        env.Replace(CXX = cross + 'g++')
++        env.Replace(LD = cross + 'ld')
++
+     return env
+ 
+ def display_help(env,vars):
