@@ -29,7 +29,7 @@ diff -Naur linux-custom.orig/drivers/video/fbdev/Makefile linux-custom/drivers/v
 diff -Naur linux-custom.orig/drivers/video/fbdev/vdmafb.c linux-custom/drivers/video/fbdev/vdmafb.c
 --- linux-custom.orig/drivers/video/fbdev/vdmafb.c	1970-01-01 03:00:00.000000000 +0300
 +++ linux-custom/drivers/video/fbdev/vdmafb.c	2024-02-03 18:36:59.142234129 +0300
-@@ -0,0 +1,756 @@
+@@ -0,0 +1,754 @@
 +/**
 + * @file vdmafb.c
 + * @author Belousov Oleg <belousov.oleg@gmail.com>

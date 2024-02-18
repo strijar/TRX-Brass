@@ -1,0 +1,11 @@
+--- a/configure.ac	2024-02-18 16:35:40.252745063 +0300
++++ b/configure.ac	2024-02-18 16:36:21.808554664 +0300
+@@ -243,7 +243,7 @@
+         *)
+             # TODO: check these flags
+             #ARCH_OPTION="-ffast-math -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon";;
+-            ARCH_OPTION="-ffast-math -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon-vfpv4";;
++            ARCH_OPTION="-ffast-math -march=armv7-a -mfpu=neon -mfloat-abi=hard";;
+         esac;;
+     *)
+         # unknown architecture : use portable C version
