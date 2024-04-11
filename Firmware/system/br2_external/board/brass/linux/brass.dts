@@ -1,5 +1,8 @@
 /dts-v1/;
 
+#include <dt-bindings/input/input.h>
+#include <dt-bindings/interrupt-controller/irq.h>
+
 #include "zynq-7000.dtsi"
 
 / {
@@ -35,22 +38,57 @@
 };
 
 &gem0 {
+	enet-reset = <&gpio0 7 0>;
 	phy-mode = "rgmii-id";
+	status = "okay";
 	xlnx,ptp-enet-clock = <0x79dbbf3>;
 	local-mac-address = [46 28 FA DA 2F 4B];
-	status = "okay";
 };
 
 &gpio0 {
 	emio-gpio-width = <64>;
 	gpio-mask-high = <0x0>;
 	gpio-mask-low = <0x5600>;
-	status = "okay";
 };
 
 &i2c0 {
 	clock-frequency = <400000>;
 	status = "okay";
+
+	rtc@68 {
+	    compatible = "maxim,ds3231";
+	    reg = <0x68>;
+	};
+
+	keypad@34 {
+		compatible = "ti,tca8418";
+		reg = <0x34>;
+		interrupt-parent = <&gpio0>;
+		interrupts = <10 IRQ_TYPE_EDGE_FALLING>;
+		linux,keymap = < 
+			MATRIX_KEY(0x03, 0x02, BTN_NORTH)
+
+			MATRIX_KEY(0x03, 0x03, KEY_1)
+			MATRIX_KEY(0x03, 0x01, KEY_2)
+			MATRIX_KEY(0x03, 0x00, KEY_3)
+
+			MATRIX_KEY(0x00, 0x03, BTN_SOUTH)
+
+			MATRIX_KEY(0x00, 0x01, KEY_F1)
+			MATRIX_KEY(0x00, 0x02, KEY_F2)
+			MATRIX_KEY(0x02, 0x00, KEY_F3)
+			MATRIX_KEY(0x02, 0x01, KEY_F4)
+			MATRIX_KEY(0x02, 0x02, KEY_F5)
+			MATRIX_KEY(0x02, 0x03, KEY_F6)
+
+			MATRIX_KEY(0x01, 0x00, KEY_A)
+			MATRIX_KEY(0x01, 0x01, KEY_B)
+			MATRIX_KEY(0x01, 0x02, KEY_C)
+			MATRIX_KEY(0x01, 0x03, KEY_D)
+		>;
+		keypad,num-rows = <4>;
+		keypad,num-columns = <4>;
+	};
 };
 
 &intc {
@@ -64,17 +102,24 @@
 	num-cs = <1>;
 	spi-rx-bus-width = <4>;
 	spi-tx-bus-width = <4>;
-	status = "okay";
+	status = "disabled";
 };
 
 &sdhci0 {
 	status = "okay";
-	xlnx,has-cd = <0x1>;
+	xlnx,has-cd = <0x0>;
 	xlnx,has-power = <0x0>;
 	xlnx,has-wp = <0x0>;
 };
 
-&uart1 {
+&sdhci1 {
+	status = "disabled";
+	xlnx,has-cd = <0x0>;
+	xlnx,has-power = <0x0>;
+	xlnx,has-wp = <0x0>;
+};
+
+&uart0 {
 	cts-override ;
 	device_type = "serial";
 	port-number = <0>;
@@ -84,7 +129,8 @@
 &usb0 {
 	phy_type = "ulpi";
 	status = "okay";
-	usb-reset = <&gpio0 46 0>;
+	usb-reset = <&gpio0 8 0>;
+	dr_mode = "host";
 };
 
 &clkc {
@@ -99,8 +145,8 @@
 	};
 	aliases {
 		ethernet0 = &gem0;
+		serial0 = &uart0;
 		i2c0 = &i2c0;
-		serial0 = &uart1;
 		spi0 = &qspi;
 	};
 	memory {
