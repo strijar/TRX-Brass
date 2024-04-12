@@ -25,6 +25,18 @@
 	};
 };
 
+&gem0 {
+	status = "okay";
+	phy-mode = "rgmii-id";
+	phy-handle = <&ethernet_phy>;
+	enet-reset = <&gpio0 7 0>;
+
+	ethernet_phy: ethernet-phy@0 {
+		reg = <0>;
+		device_type = "ethernet-phy";
+	};
+};
+
 &clkc {
 	ps-clk-frequency = <33333333>;
 };

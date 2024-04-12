@@ -6,6 +6,28 @@
 #include "zynq-7000.dtsi"
 
 / {
+	model = "TRX Brass";
+	compatible = "xlnx,zynq-7000";
+
+	chosen {
+		bootargs = "earlycon";
+		stdout-path = "serial0:115200n8";
+	};
+
+	aliases {
+		ethernet0 = &gem0;
+		serial0 = &uart0;
+		i2c0 = &i2c0;
+		spi0 = &qspi;
+		mmc0 = &sdhci0;
+		mmc1 = &sdhci1;
+	};
+
+	memory {
+		device_type = "memory";
+		reg = <0x0 0x40000000>;
+	};
+
 	amba_pl: amba_pl {
 		#address-cells = <1>;
 		#size-cells = <1>;
@@ -26,14 +48,62 @@
 			clock-frequency = <100000000>;
 			compatible = "fixed-clock";
 		};
-	};
-};
 
-/ {
+		axi_gpio: gpio@41200000 {
+			#gpio-cells = <2>;
+			#interrupt-cells = <2>;
+			clock-names = "s_axi_aclk";
+			clocks = <&clkc 15>;
+			compatible = "xlnx,axi-gpio-2.0", "xlnx,xps-gpio-1.00.a";
+			gpio-controller ;
+			interrupt-controller ;
+			interrupt-names = "ip2intc_irpt";
+			interrupt-parent = <&intc>;
+			interrupts = <0 29 4>;
+			reg = <0x41200000 0x10000>;
+			xlnx,all-inputs = <0x0>;
+			xlnx,all-inputs-2 = <0x0>;
+			xlnx,all-outputs = <0x0>;
+			xlnx,all-outputs-2 = <0x0>;
+			xlnx,dout-default = <0x00000000>;
+			xlnx,dout-default-2 = <0x00000000>;
+			xlnx,gpio-width = <0x17>;
+			xlnx,gpio2-width = <0x20>;
+			xlnx,interrupt-present = <0x1>;
+			xlnx,is-dual = <0x0>;
+			xlnx,tri-default = <0xFFFFFFFF>;
+			xlnx,tri-default-2 = <0xFFFFFFFF>;
+		};
+	};
+
+	usb_phy0: phy0@e0002000 {
+		compatible = "ulpi-phy";
+		#phy-cells = <0>;
+		reg = <0xe0002000 0x1000>;
+		view-port = <0x0170>;
+		drv-vbus;
+	};
+
 	cpus {
 		cpu@0 {
 			operating-points = <766666 1000000 383333 1000000>;
 		};
+	};
+
+	rotary@0 {
+		compatible = "rotary-encoder";
+		gpios = <&axi_gpio 7 0>, <&axi_gpio 8 0>;
+		linux,axis = <0>;
+		rotary-encoder,encoding = "gray";
+		rotary-encoder,relative-axis;
+	};
+
+	rotary@1 {
+		compatible = "rotary-encoder";
+		gpios = <&axi_gpio 9 0>, <&axi_gpio 10 1>;
+		linux,axis = <1>;
+		rotary-encoder,encoding = "gray";
+		rotary-encoder,relative-axis;
 	};
 };
 
@@ -113,7 +183,7 @@
 };
 
 &sdhci1 {
-	status = "disabled";
+	status = "okay";
 	xlnx,has-cd = <0x0>;
 	xlnx,has-power = <0x0>;
 	xlnx,has-wp = <0x0>;
@@ -127,30 +197,13 @@
 };
 
 &usb0 {
-	phy_type = "ulpi";
 	status = "okay";
 	usb-reset = <&gpio0 8 0>;
 	dr_mode = "host";
+	usb-phy = <&usb_phy0>;
 };
 
 &clkc {
 	fclk-enable = <0x3>;
 	ps-clk-frequency = <33333333>;
-};
-
-/ {
-	chosen {
-		bootargs = "earlycon";
-		stdout-path = "serial0:115200n8";
-	};
-	aliases {
-		ethernet0 = &gem0;
-		serial0 = &uart0;
-		i2c0 = &i2c0;
-		spi0 = &qspi;
-	};
-	memory {
-		device_type = "memory";
-		reg = <0x0 0x40000000>;
-	};
 };
