@@ -101,7 +101,15 @@
 	rotary@1 {
 		compatible = "rotary-encoder";
 		gpios = <&axi_gpio 9 0>, <&axi_gpio 10 1>;
-		linux,axis = <1>;
+		linux,axis = <0>;
+		rotary-encoder,encoding = "gray";
+		rotary-encoder,relative-axis;
+	};
+
+	rotary@2 {
+		compatible = "rotary-encoder";
+		gpios = <&gpio0 12 0>, <&gpio0 13 0>;
+		linux,axis = <0>;
 		rotary-encoder,encoding = "gray";
 		rotary-encoder,relative-axis;
 	};
