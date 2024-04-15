@@ -1,6 +1,6 @@
 diff -Naur linux-custom.orig/drivers/video/fbdev/Kconfig linux-custom/drivers/video/fbdev/Kconfig
 --- linux-custom.orig/drivers/video/fbdev/Kconfig	2023-04-21 10:47:58.000000000 +0300
-+++ linux-custom/drivers/video/fbdev/Kconfig	2024-02-03 18:25:35.001867790 +0300
++++ linux-custom/drivers/video/fbdev/Kconfig	2024-04-10 21:08:13.507393164 +0300
 @@ -1999,6 +1999,13 @@
  	  framebuffer. ML300 carries a 640*480 LCD display on the board,
  	  ML403 uses a standard DB15 VGA connector.
@@ -17,7 +17,7 @@ diff -Naur linux-custom.orig/drivers/video/fbdev/Kconfig linux-custom/drivers/vi
  	depends on FB
 diff -Naur linux-custom.orig/drivers/video/fbdev/Makefile linux-custom/drivers/video/fbdev/Makefile
 --- linux-custom.orig/drivers/video/fbdev/Makefile	2023-04-21 10:47:58.000000000 +0300
-+++ linux-custom/drivers/video/fbdev/Makefile	2024-02-03 18:25:53.949877936 +0300
++++ linux-custom/drivers/video/fbdev/Makefile	2024-04-10 21:08:13.507393164 +0300
 @@ -109,6 +109,7 @@
  obj-$(CONFIG_FB_UDL)		  += udlfb.o
  obj-$(CONFIG_FB_SMSCUFX)	  += smscufx.o
@@ -28,8 +28,8 @@ diff -Naur linux-custom.orig/drivers/video/fbdev/Makefile linux-custom/drivers/v
  obj-y                             += omap2/
 diff -Naur linux-custom.orig/drivers/video/fbdev/vdmafb.c linux-custom/drivers/video/fbdev/vdmafb.c
 --- linux-custom.orig/drivers/video/fbdev/vdmafb.c	1970-01-01 03:00:00.000000000 +0300
-+++ linux-custom/drivers/video/fbdev/vdmafb.c	2024-02-03 18:36:59.142234129 +0300
-@@ -0,0 +1,754 @@
++++ linux-custom/drivers/video/fbdev/vdmafb.c	2024-04-15 20:25:07.410153799 +0300
+@@ -0,0 +1,509 @@
 +/**
 + * @file vdmafb.c
 + * @author Belousov Oleg <belousov.oleg@gmail.com>
@@ -99,20 +99,6 @@ diff -Naur linux-custom.orig/drivers/video/fbdev/vdmafb.c linux-custom/drivers/v
 +
 +#define VDMA_FRMDLY_SHIFT           24
 +
-+/* DynClk */
-+
-+#define CLK_BIT_WEDGE               13
-+#define CLK_BIT_NOCOUNT             12
-+
-+#define OFST_DISPLAY_CTRL           0x00000000
-+#define OFST_DISPLAY_STATUS         0x00000004
-+#define OFST_DISPLAY_CLK_L          0x00000008
-+#define OFST_DISPLAY_FB_L           0x0000000C
-+#define OFST_DISPLAY_FB_H_CLK_H     0x00000010
-+#define OFST_DISPLAY_DIV            0x00000014
-+#define OFST_DISPLAY_LOCK_L         0x00000018
-+#define OFST_DISPLAY_FLTR_LOCK_H    0x0000001C
-+
 +/* Driver */
 +
 +#define BIT_DISPLAY_RED             16
@@ -132,7 +118,7 @@ diff -Naur linux-custom.orig/drivers/video/fbdev/vdmafb.c linux-custom/drivers/v
 +#define BYTES_PER_PIXEL             3
 +#define BITS_PER_PIXEL              (BYTES_PER_PIXEL * 8)
 +
-+#define NUMBER_OF_MEM_RESOURCES     2
++#define NUMBER_OF_MEM_RESOURCES     1
 +
 +#define FB_NUMBER_OF_FRAMES         1
 +#define PALETTE_ENTRIES_NO          16
@@ -171,13 +157,6 @@ diff -Naur linux-custom.orig/drivers/video/fbdev/vdmafb.c linux-custom/drivers/v
 +    void*   virt;
 +};
 +
-+struct dynclk_param {
-+    u16     prescaler;
-+    u16     multiplier;
-+    u16     postscaler;
-+    u16     reserved;
-+};
-+
 +struct vdma_fb_screen_param {
 +    u32     width;
 +    u32     height;
@@ -189,25 +168,22 @@ diff -Naur linux-custom.orig/drivers/video/fbdev/vdmafb.c linux-custom/drivers/v
 +    u32     vFrameSize;
 +    u32     vSyncStart;
 +    u32     vSyncEnd;
-+
-+    struct dynclk_param dynclk;
 +};
 +
 +struct vdma_fb_screen_param vdma_fb_screen_params[] = {
-+    /*w,    h,    hfsz, hss,  hse,  vfsz, vss,  vse,   pre, mul, post, rsvd */
-+    { 640,  480,  800,  656,  752,  525,  489,  491,  {1, 10, 8, 0} },
-+    { 800,  480,  1056, 840,  968,  525,  489,  491,  {1, 10, 6, 0} },
-+    { 800,  600,  1056, 840,  968,  628,  600,  604,  {1, 8,  4, 0} },
-+    { 1280, 720,  1650, 1390, 1430, 750,  724,  729,  {4, 30, 1, 0} },
-+    { 1280, 1024, 1688, 1328, 1440, 1066, 1024, 1027, {8, 86, 2, 0} },
-+    { 1920, 1080, 2200, 2008, 2052, 1125, 1083, 1088, {12,89, 1, 0} },
++    /*w,    h,    hfsz, hss,  hse,  vfsz, vss,  vse */
++    { 640,  480,  800,  656,  752,  525,  489,  491 },
++    { 800,  480,  1056, 840,  968,  525,  489,  491 },
++    { 800,  600,  1056, 840,  968,  628,  600,  604 },
++    { 1280, 720,  1650, 1390, 1430, 750,  724,  729 },
++    { 1280, 1024, 1688, 1328, 1440, 1066, 1024, 1027 },
++    { 1920, 1080, 2200, 2008, 2052, 1125, 1083, 1088 },
 +    { 0 },
 +};
 +
 +struct vdma_fb_device {
 +    struct fb_info      info;       /* fb_info struct to register framebuffer */
 +
-+    void __iomem*       reg_dynclk; /* virtual address to which dynclk register space is mapped. */
 +    void __iomem*       reg_vdma;   /* virtual address to which VDMA register space is mapped. */
 +    struct device*      dev;        /* device object */
 +
@@ -224,14 +200,6 @@ diff -Naur linux-custom.orig/drivers/video/fbdev/vdmafb.c linux-custom/drivers/v
 +
 +
 +/* register access functions */
-+
-+static u32 dynclk_read_reg(struct vdma_fb_device* fbdev, u32 offset) { 
-+    return ioread32(fbdev->reg_dynclk + offset);
-+}
-+
-+static void dynclk_write_reg(struct vdma_fb_device* fbdev, u32 offset, u32 value) { 
-+    iowrite32(value, fbdev->reg_dynclk + offset);
-+}
 +
 +static u32 vdma_read_reg(struct vdma_fb_device* fbdev, u32 offset) { 
 +    return ioread32(fbdev->reg_vdma + offset); 
@@ -255,178 +223,6 @@ diff -Naur linux-custom.orig/drivers/video/fbdev/vdmafb.c linux-custom/drivers/v
 +
 +static void vdma_rx_write_reg(struct vdma_fb_device* fbdev, u32 offset, u32 value) {
 +    iowrite32(value, fbdev->reg_vdma + offset + VDMA_REG_RX);
-+}
-+
-+/* PLL multiplier (feedback divider) to lock pattern lookup table */
-+
-+static const u64 lock_lookup[64] = {
-+   0b0011000110111110100011111010010000000001,
-+   0b0011000110111110100011111010010000000001,
-+   0b0100001000111110100011111010010000000001,
-+   0b0101101011111110100011111010010000000001,
-+   0b0111001110111110100011111010010000000001,
-+   0b1000110001111110100011111010010000000001,
-+   0b1001110011111110100011111010010000000001,
-+   0b1011010110111110100011111010010000000001,
-+   0b1100111001111110100011111010010000000001,
-+   0b1110011100111110100011111010010000000001,
-+   0b1111111111111000010011111010010000000001,
-+   0b1111111111110011100111111010010000000001,
-+   0b1111111111101110111011111010010000000001,
-+   0b1111111111101011110011111010010000000001,
-+   0b1111111111101000101011111010010000000001,
-+   0b1111111111100111000111111010010000000001,
-+   0b1111111111100011111111111010010000000001,
-+   0b1111111111100010011011111010010000000001,
-+   0b1111111111100000110111111010010000000001,
-+   0b1111111111011111010011111010010000000001,
-+   0b1111111111011101101111111010010000000001,
-+   0b1111111111011100001011111010010000000001,
-+   0b1111111111011010100111111010010000000001,
-+   0b1111111111011001000011111010010000000001,
-+   0b1111111111011001000011111010010000000001,
-+   0b1111111111010111011111111010010000000001,
-+   0b1111111111010101111011111010010000000001,
-+   0b1111111111010101111011111010010000000001,
-+   0b1111111111010100010111111010010000000001,
-+   0b1111111111010100010111111010010000000001,
-+   0b1111111111010010110011111010010000000001,
-+   0b1111111111010010110011111010010000000001,
-+   0b1111111111010010110011111010010000000001,
-+   0b1111111111010001001111111010010000000001,
-+   0b1111111111010001001111111010010000000001,
-+   0b1111111111010001001111111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001,
-+   0b1111111111001111101011111010010000000001
-+};
-+
-+/* PLL multiplier (feedback divider) to feedback filter value lookup table. */
-+
-+static const u32 filter_lookup_low[64] = {
-+    0b0001011111,
-+    0b0001010111,
-+    0b0001111011,
-+    0b0001011011,
-+    0b0001101011,
-+    0b0001110011,
-+    0b0001110011,
-+    0b0001110011,
-+    0b0001110011,
-+    0b0001001011,
-+    0b0001001011,
-+    0b0001001011,
-+    0b0010110011,
-+    0b0001010011,
-+    0b0001010011,
-+    0b0001010011,
-+    0b0001010011,
-+    0b0001010011,
-+    0b0001010011,
-+    0b0001010011,
-+    0b0001010011,
-+    0b0001010011,
-+    0b0001010011,
-+    0b0001100011,
-+    0b0001100011,
-+    0b0001100011,
-+    0b0001100011,
-+    0b0001100011,
-+    0b0001100011,
-+    0b0001100011,
-+    0b0001100011,
-+    0b0001100011,
-+    0b0001100011,
-+    0b0001100011,
-+    0b0001100011,
-+    0b0001100011,
-+    0b0001100011,
-+    0b0010010011,
-+    0b0010010011,
-+    0b0010010011,
-+    0b0010010011,
-+    0b0010010011,
-+    0b0010010011,
-+    0b0010010011,
-+    0b0010010011,
-+    0b0010010011,
-+    0b0010010011,
-+    0b0010100011,
-+    0b0010100011,
-+    0b0010100011,
-+    0b0010100011,
-+    0b0010100011,
-+    0b0010100011,
-+    0b0010100011,
-+    0b0010100011,
-+    0b0010100011,
-+    0b0010100011,
-+    0b0010100011,
-+    0b0010100011,
-+    0b0010100011,
-+    0b0010100011,
-+    0b0010100011,
-+    0b0010100011,
-+    0b0010100011
-+};
-+
-+/**
-+ * Calculate divider value from target divisor.
-+ */
-+
-+static u32 dynclk_calculate_divider(u32 divisor) {
-+    u32 clock_on = divisor / 2;
-+    u32 clock_off = divisor - clock_on;
-+    u32 reg_value = 0;
-+    
-+    if ( divisor == 1) {
-+        return 0x1041u;
-+    }
-+
-+    if (divisor & 1) {
-+        reg_value = 1u << CLK_BIT_WEDGE;
-+        clock_off++;
-+    }
-+    
-+    reg_value |= (clock_off & 0x3fu) << 0;
-+    reg_value |= (clock_on  & 0x3fu) << 6;
-+
-+    return reg_value;
-+}
-+
-+/**
-+ * Calculate divider register value from target divisor.
-+ */
-+
-+static u32 dynclk_calculate_divider_config(u32 divisor) {
-+    u32 divider = dynclk_calculate_divider(divisor);
-+
-+    return (divider & 0xfffu) | ((divider & 0x3000u) << 10);
 +}
 +
 +/**
@@ -545,14 +341,8 @@ diff -Naur linux-custom.orig/drivers/video/fbdev/vdmafb.c linux-custom/drivers/v
 +        vdma_tx_write_reg(fbdev, VDMA_REG_CR, VDMA_CR_RESET_MASK);
 +    }
 +
-+    if (fbdev->reg_dynclk != NULL) {
-+        /* Stop clock generator. */
-+        dynclk_write_reg(fbdev, OFST_DISPLAY_CLK_L, 0);
-+    }
-+
 +    /* Release memory mapped IO resources */
 +
-+    RELEASE_REG_RESOURCE(fbdev, dynclk);
 +    RELEASE_REG_RESOURCE(fbdev, vdma);
 +    
 +    /* Release framebuffer memories. */
@@ -624,8 +414,7 @@ diff -Naur linux-custom.orig/drivers/video/fbdev/vdmafb.c linux-custom/drivers/v
 +        }
 +
 +        switch (regIndex) {
-+            case 0: fbdev->reg_dynclk = reg; break;  /* DynClk module */
-+            case 1: fbdev->reg_vdma   = reg; break;  /* Video DMA */
++            case 0: fbdev->reg_vdma   = reg; break;  /* Video DMA */
 +        }
 +    }
 +    
@@ -663,40 +452,6 @@ diff -Naur linux-custom.orig/drivers/video/fbdev/vdmafb.c linux-custom/drivers/v
 +    fbdev->info.var.yres_virtual = fbdev->info.var.yres;            /* Virtual Y resolution */
 +    fbdev->info.var.width  = (u32)(fbdev->info.var.xres*5/96/2);    /* Physical screen width in millimeters */
 +    fbdev->info.var.height = (u32)(fbdev->info.var.yres*5/96/2);    /* Physical screen height in millimeters */
-+
-+    /* Enable dynamically generated clock */
-+
-+    dynclk_write_reg(fbdev, OFST_DISPLAY_CTRL, 0);
-+    mdelay(1);
-+
-+    if (dynclk_read_reg(fbdev, OFST_DISPLAY_STATUS) & (1u << BIT_CLOCK_RUNNING)) {
-+        dev_err(&pdev->dev, "Failed to stop dynamic clock.\n");
-+        RELEASE_AND_RETURN(-ENOMEM);
-+    }
-+
-+    /* Configure Dynamic clock module to generate required pixel rate. */
-+
-+    u32 clk_l   = dynclk_calculate_divider_config(fbdev->screen_param->dynclk.prescaler);
-+    u32 fb_l    = dynclk_calculate_divider_config(fbdev->screen_param->dynclk.multiplier);
-+    u32 div_    = dynclk_calculate_divider(fbdev->screen_param->dynclk.postscaler);
-+    u32 lock_l  = (u32)(lock_lookup[8 - 1] & 0xffffffffu);
-+    u32 filter_lock_h = (u32)(lock_lookup[8 - 1] >> 32) | ((filter_lookup_low[8 - 1] & 0x3ffu) << 16);
-+
-+    dynclk_write_reg(fbdev, OFST_DISPLAY_CLK_L, clk_l);
-+    dynclk_write_reg(fbdev, OFST_DISPLAY_FB_L, fb_l);
-+    dynclk_write_reg(fbdev, OFST_DISPLAY_FB_H_CLK_H, 0);
-+    dynclk_write_reg(fbdev, OFST_DISPLAY_DIV, div_);
-+    dynclk_write_reg(fbdev, OFST_DISPLAY_LOCK_L, lock_l);
-+    dynclk_write_reg(fbdev, OFST_DISPLAY_FLTR_LOCK_H, filter_lock_h);
-+
-+    dynclk_write_reg(fbdev, OFST_DISPLAY_CTRL, (1u << BIT_DISPLAY_START));
-+    mdelay(1);
-+
-+    if (!dynclk_read_reg(fbdev, OFST_DISPLAY_STATUS) & (1u << BIT_CLOCK_RUNNING)) {
-+        dev_err(&pdev->dev, "Failed to start dynamic clock.\n");
-+        RELEASE_AND_RETURN(-ENOMEM);
-+    }
-+    dev_info(&pdev->dev, "DYNCLK configured.\n");
 +
 +    /* Initialize VDMA */
 +
