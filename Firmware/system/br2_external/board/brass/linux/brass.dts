@@ -84,10 +84,10 @@
 			reg = <0x43C00000 0x10000>;
 			#sound-dai-cells = <0>;
 			compatible = "adi,axi-i2s-1.00.a";
-			clocks = <&clkc 15>, <&i2s_clk>;
-			clock-names = "axi", "ref";
-			dmas = <&dmac_s 1>, <&dmac_s 0>;
-			dma-names = "tx", "rx";
+			clocks = <&i2s_clk>, <&clkc 15>;
+			clock-names = "ref", "axi";
+			dmas = <&dmac_s 0>, <&dmac_s 1>;
+			dma-names = "rx", "tx";
 		};
 
 		sound {
@@ -96,6 +96,25 @@
 			simple-audio-card,format = "i2s";
 			simple-audio-card,bitclock-master = <&dailink0_master>;
 			simple-audio-card,frame-master = <&dailink0_master>;
+
+			simple-audio-card,routing =
+				"Headphones", "LHP",
+				"Headphones", "RHP",
+				"Speaker", "LSPK",
+				"Speaker", "RSPK",
+				"Line Out", "AUXOUT1",
+				"Line Out", "AUXOUT2",
+				"LAUX", "Line In",
+				"RAUX", "Line In",
+				"LMICP", "Mic In",
+				"RMICP", "Mic In";
+
+			simple-audio-card,widgets =
+				"Headphones", "Headphones",
+				"Line Out", "Line Out",
+				"Speaker", "Speaker",
+				"Microphone", "Mic In",
+				"Line", "Line In";
 
 			dailink0_master: simple-audio-card,cpu {
 				clocks = <&i2s_clk>;
