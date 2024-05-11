@@ -1,0 +1,11 @@
+diff -Naur linux-custom.orig/drivers/uio/uio_pdrv_genirq.c linux-custom/drivers/uio/uio_pdrv_genirq.c
+--- linux-custom.orig/drivers/uio/uio_pdrv_genirq.c	2023-04-21 10:47:58.000000000 +0300
++++ linux-custom/drivers/uio/uio_pdrv_genirq.c	2024-05-11 14:53:38.838408701 +0300
+@@ -276,6 +276,7 @@
+ 
+ #ifdef CONFIG_OF
+ static struct of_device_id uio_of_genirq_match[] = {
++	{ .compatible = "generic-uio", },
+ 	{ /* This is filled with module_parm */ },
+ 	{ /* Sentinel */ },
+ };
