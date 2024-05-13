@@ -92,7 +92,7 @@
 			dma-names = "rx", "tx";
 		};
 
-		trx_dma: dma@40400000 {
+		fft_dma: dma@40400000 {
 			#dma-cells = <1>;
 			clock-names = "s_axi_lite_aclk", "m_axi_sg_aclk", "m_axi_s2mm_aclk";
 			clocks = <&axi_clk>, <&axi_clk>, <&axi_clk>;
@@ -115,12 +115,12 @@
 		};
 	};
 
-	dma_proxy {  
+	dma_proxy {
 		compatible ="xlnx,dma_proxy";
-		dmas = <&trx_dma 1>;
-		dma-names = "adc";  
+		dmas = <&fft_dma 1>;
+		dma-names = "fft";
 	};
-    
+
 	rx_control {
 		compatible = "generic-uio";
 		reg = <0x43C10000 0x1000>;
