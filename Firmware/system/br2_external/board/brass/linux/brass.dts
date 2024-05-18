@@ -92,7 +92,7 @@
 			dma-names = "rx", "tx";
 		};
 
-		fft_dma: dma@40400000 {
+		dma_fft: dma@40400000 {
 			#dma-cells = <1>;
 			clock-names = "s_axi_lite_aclk", "m_axi_sg_aclk", "m_axi_s2mm_aclk";
 			clocks = <&axi_clk>, <&axi_clk>, <&axi_clk>;
@@ -113,12 +113,35 @@
 				xlnx,device-id = <0x1>;
 			};
 		};
+
+		dma_adc: dma@40410000 {
+			#dma-cells = <1>;
+			clock-names = "s_axi_lite_aclk", "m_axi_sg_aclk", "m_axi_s2mm_aclk";
+			clocks = <&axi_clk>, <&axi_clk>, <&axi_clk>;
+			compatible = "xlnx,axi-dma-7.1", "xlnx,axi-dma-1.00.a";
+			interrupt-names = "s2mm_introut";
+			interrupt-parent = <&intc>;
+			interrupts = <0 32 4>;
+			reg = <0x40410000 0x10000>;
+			xlnx,addrwidth = <0x20>;
+			xlnx,include-sg ;
+			xlnx,sg-length-width = <0xe>;
+
+			dma-channel@40410030 {
+				compatible = "xlnx,axi-dma-s2mm-channel";
+				dma-channels = <0x1>;
+				interrupts = <0 32 4>;
+				xlnx,datawidth = <0x20>;
+				xlnx,device-id = <0x1>;
+			};
+		};
+
 	};
 
 	dma_proxy {
 		compatible ="xlnx,dma_proxy";
-		dmas = <&fft_dma 1>;
-		dma-names = "fft";
+		dmas = <&dma_fft 1 &dma_adc 1>;
+		dma-names = "fft", "adc";
 	};
 
 	rx_control {
