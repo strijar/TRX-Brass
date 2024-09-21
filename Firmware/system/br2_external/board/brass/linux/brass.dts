@@ -231,6 +231,17 @@
 		rotary-encoder,encoding = "gray";
 		rotary-encoder,relative-axis;
 	};
+
+	gpio-keys {
+		compatible = "gpio-keys";
+
+		key-ptt {
+			label = "GPIO Key PTT";
+			linux,code = <KEY_CONNECT>;
+			gpios = <&axi_gpio 19 1>;
+		};
+	};
+
 };
 
 &gem0 {
