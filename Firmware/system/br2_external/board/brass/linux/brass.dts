@@ -114,18 +114,26 @@
 			};
 		};
 
-		dma_adc: dma@40410000 {
+		dma_trx: dma@40410000 {
 			#dma-cells = <1>;
 			clock-names = "s_axi_lite_aclk", "m_axi_sg_aclk", "m_axi_s2mm_aclk";
 			clocks = <&axi_clk>, <&axi_clk>, <&axi_clk>;
 			compatible = "xlnx,axi-dma-7.1", "xlnx,axi-dma-1.00.a";
-			interrupt-names = "s2mm_introut";
+			interrupt-names = "mm2s_introut", "s2mm_introut";
 			interrupt-parent = <&intc>;
-			interrupts = <0 32 4>;
+			interrupts = <0 33 4 0 32 4>;
 			reg = <0x40410000 0x10000>;
 			xlnx,addrwidth = <64>;
 			xlnx,include-sg ;
 			xlnx,sg-length-width = <14>;
+
+			dma-channel@40410000 {
+				compatible = "xlnx,axi-dma-mm2s-channel";
+				dma-channels = <0x1>;
+				interrupts = <0 33 4>;
+				xlnx,datawidth = <64>;
+				xlnx,device-id = <1>;
+			};
 
 			dma-channel@40410030 {
 				compatible = "xlnx,axi-dma-s2mm-channel";
@@ -135,18 +143,22 @@
 				xlnx,device-id = <1>;
 			};
 		};
-
 	};
 
 	dma_proxy {
 		compatible ="xlnx,dma_proxy";
-		dmas = <&dma_fft 1 &dma_adc 1>;
-		dma-names = "fft", "adc";
+		dmas = <&dma_fft 1 &dma_trx 1 &dma_trx 0>;
+		dma-names = "fft", "adc", "dac";
 	};
 
 	rx_control {
 		compatible = "generic-uio";
 		reg = <0x43C10000 0x1000>;
+	};
+
+	tx_control {
+		compatible = "generic-uio";
+		reg = <0x43C20000 0x1000>;
 	};
 
 	sound {
@@ -181,7 +193,6 @@
 			sound-dai = <&codec>;
 		};
 	};
-
 
 	usb_phy0: phy0@e0002000 {
 		compatible = "ulpi-phy";
@@ -220,8 +231,6 @@
 		rotary-encoder,encoding = "gray";
 		rotary-encoder,relative-axis;
 	};
-
-
 };
 
 &gem0 {
