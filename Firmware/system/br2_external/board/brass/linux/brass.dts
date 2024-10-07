@@ -74,8 +74,8 @@
 			xlnx,all-outputs-2 = <0x0>;
 			xlnx,dout-default = <0x00000000>;
 			xlnx,dout-default-2 = <0x00000000>;
-			xlnx,gpio-width = <0x17>;
-			xlnx,gpio2-width = <0x20>;
+			xlnx,gpio-width = <22>;
+			xlnx,gpio2-width = <32>;
 			xlnx,interrupt-present = <0x1>;
 			xlnx,is-dual = <0x0>;
 			xlnx,tri-default = <0xFFFFFFFF>;
@@ -238,8 +238,26 @@
 		key-ptt {
 			label = "GPIO Key PTT";
 			linux,code = <KEY_CONNECT>;
-			gpios = <&axi_gpio 19 1>;
+			gpios = <&axi_gpio 18 1>;
 		};
+
+		key-power {
+			label = "GPIO Key Power";
+			linux,code = <KEY_POWER>;
+			gpios = <&axi_gpio 14 1>;
+		};
+	};
+
+	control_regs: axi@43c30000 {
+		compatible = "syscon";
+		reg = <0x43c30000 0x1000>;
+	};
+
+	poweroff {
+		compatible = "syscon-poweroff";
+		regmap = <&control_regs>;
+		offset = <0x00>;
+		mask = <0x1>;
 	};
 
 };
@@ -259,7 +277,7 @@
 };
 
 &i2c0 {
-	clock-frequency = <400000>;
+	clock-frequency = <200000>;
 	status = "okay";
 
 	rtc@68 {
@@ -333,6 +351,64 @@
 		>;
 		keypad,num-rows = <4>;
 		keypad,num-columns = <4>;
+	};
+
+    /* U1 */
+
+	rf_gpio1: gpio@20 {
+		compatible = "pcf8575";
+		reg = <0x20>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		gpio-line-names = 
+			"BPF_LF", "BPF_40", "BPF_160", "BPF_80", "BPF_30_20", "BPF_17_15", "BPF_12_20", "BPF_6",
+			"BPF_0_60", "ATT_16", "ATT_0.5", "ATT_1", "ATT_2", "ATT_4", "ATT_8", "HF_LNA";
+	};
+
+    /* U2 */
+
+	rf_gpio2: gpio@21 {
+		compatible = "pcf8575";
+		reg = <0x21>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		gpio-line-names = 
+			"ADF_CLK", "ADF_DATA", "ADF_LE", "VHF/UHF_RX_TX", "XVRT_HF_VHF/UHF", "", "RELAY_LPF_VHF/UHF", "RELAY_VHF/UHF_RX_TX",
+			"", "", "RELAY_HF_RX_TX", "RELAY_SWAP_C", "SEL_VHF/UHF", "", "", "";
+	};
+
+    /* U3 */
+
+	rf_gpio3: gpio@22 {
+		compatible = "pcf8575";
+		reg = <0x22>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		gpio-line-names = 
+			"", "LPF_160", "LPF_80", "LPF_40", "LPF_20", "LPF_15", "LPF_10", "LPF_6",
+			"L_07", "L_06", "L_05", "L_04", "L_03", "L_02", "L_01", "";
+	};
+
+    /* U28 */
+
+	rf_gpio4: gpio@24 {
+		compatible = "pcf8575";
+		reg = <0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		gpio-line-names = 
+			"C_01", "C_06", "C_05", "C_04", "BAND_3", "BAND_1", "BAND_0", "BAND_2",
+			"RELAY_HF_VHF/UHF", "C_02", "C_03", "C_07", "", "PTT_EXT", "", "";
+	};
+
+	tx_bias_a: bias@2d {
+		compatible = "ad5245";
+		reg = <0x2d>;
+	};
+
+	tx_bias_b: bias@2c {
+		compatible = "ad5245";
+		reg = <0x2c>;
 	};
 };
 
