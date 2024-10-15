@@ -210,7 +210,7 @@ state.BrassSoundCard {
 	control.18 {
 		iface MIXER
 		name 'ALC Min Gain'
-		value 7
+		value 5
 		comment {
 			access 'read write'
 			type INTEGER
@@ -221,7 +221,7 @@ state.BrassSoundCard {
 	control.19 {
 		iface MIXER
 		name 'ALC Max Gain'
-		value 7
+		value 5
 		comment {
 			access 'read write'
 			type INTEGER
@@ -243,7 +243,7 @@ state.BrassSoundCard {
 	control.21 {
 		iface MIXER
 		name 'ALC Target'
-		value 6
+		value 0
 		comment {
 			access 'read write'
 			type INTEGER
@@ -254,7 +254,7 @@ state.BrassSoundCard {
 	control.22 {
 		iface MIXER
 		name 'ALC Decay'
-		value 1
+		value 8
 		comment {
 			access 'read write'
 			type INTEGER
@@ -286,7 +286,7 @@ state.BrassSoundCard {
 	control.25 {
 		iface MIXER
 		name 'ALC Noise Gate Threshold'
-		value 3
+		value 0
 		comment {
 			access 'read write'
 			type INTEGER
@@ -308,8 +308,8 @@ state.BrassSoundCard {
 	control.27 {
 		iface MIXER
 		name 'PGA Volume'
-		value.0 63
-		value.1 63
+		value.0 57
+		value.1 57
 		comment {
 			access 'read write'
 			type INTEGER
@@ -317,8 +317,8 @@ state.BrassSoundCard {
 			range '0 - 63'
 			dbmin -1200
 			dbmax 3525
-			dbvalue.0 3525
-			dbvalue.1 3525
+			dbvalue.0 3075
+			dbvalue.1 3075
 		}
 	}
 	control.28 {
@@ -335,8 +335,8 @@ state.BrassSoundCard {
 	control.29 {
 		iface MIXER
 		name 'Headphone Playback Switch'
-		value.0 false
-		value.1 false
+		value.0 true
+		value.1 true
 		comment {
 			access 'read write'
 			type BOOLEAN
@@ -346,8 +346,8 @@ state.BrassSoundCard {
 	control.30 {
 		iface MIXER
 		name 'Headphone Volume'
-		value.0 0
-		value.1 0
+		value.0 58
+		value.1 58
 		comment {
 			access 'read write'
 			type INTEGER
@@ -355,8 +355,8 @@ state.BrassSoundCard {
 			range '0 - 63'
 			dbmin -5700
 			dbmax 600
-			dbvalue.0 -5700
-			dbvalue.1 -5700
+			dbvalue.0 100
+			dbvalue.1 100
 		}
 	}
 	control.31 {
@@ -384,8 +384,8 @@ state.BrassSoundCard {
 	control.33 {
 		iface MIXER
 		name 'Speaker Volume'
-		value.0 63
-		value.1 63
+		value.0 58
+		value.1 58
 		comment {
 			access 'read write'
 			type INTEGER
@@ -393,8 +393,8 @@ state.BrassSoundCard {
 			range '0 - 63'
 			dbmin -5700
 			dbmax 600
-			dbvalue.0 600
-			dbvalue.1 600
+			dbvalue.0 100
+			dbvalue.1 100
 		}
 	}
 	control.34 {
@@ -427,8 +427,8 @@ state.BrassSoundCard {
 	control.36 {
 		iface MIXER
 		name 'L2/R2 Boost Volume'
-		value.0 7
-		value.1 7
+		value.0 5
+		value.1 5
 		comment {
 			access 'read write'
 			type INTEGER
@@ -436,8 +436,8 @@ state.BrassSoundCard {
 			range '0 - 7'
 			dbmin -9999999
 			dbmax 600
-			dbvalue.0 600
-			dbvalue.1 600
+			dbvalue.0 0
+			dbvalue.1 0
 		}
 	}
 	control.37 {
@@ -499,7 +499,7 @@ state.BrassSoundCard {
 	control.42 {
 		iface MIXER
 		name 'Left Output Mixer LDAC Switch'
-		value true
+		value false
 		comment {
 			access 'read write'
 			type BOOLEAN
@@ -509,7 +509,7 @@ state.BrassSoundCard {
 	control.43 {
 		iface MIXER
 		name 'Left Output Mixer RDAC Switch'
-		value false
+		value true
 		comment {
 			access 'read write'
 			type BOOLEAN
@@ -529,7 +529,7 @@ state.BrassSoundCard {
 	control.45 {
 		iface MIXER
 		name 'Right Output Mixer RAUX Switch'
-		value true
+		value false
 		comment {
 			access 'read write'
 			type BOOLEAN
@@ -539,7 +539,7 @@ state.BrassSoundCard {
 	control.46 {
 		iface MIXER
 		name 'Right Output Mixer RDAC Switch'
-		value false
+		value true
 		comment {
 			access 'read write'
 			type BOOLEAN
@@ -549,7 +549,7 @@ state.BrassSoundCard {
 	control.47 {
 		iface MIXER
 		name 'Right Output Mixer LDAC Switch'
-		value false
+		value true
 		comment {
 			access 'read write'
 			type BOOLEAN
@@ -679,7 +679,7 @@ state.BrassSoundCard {
 	control.60 {
 		iface MIXER
 		name 'Right Input Mixer R2 Switch'
-		value true
+		value false
 		comment {
 			access 'read write'
 			type BOOLEAN
