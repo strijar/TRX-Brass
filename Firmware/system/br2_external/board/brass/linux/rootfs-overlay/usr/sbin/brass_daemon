@@ -1,3 +1,5 @@
 #!/bin/sh
 
+export PYTHONPATH="/usr/share/brass/python"
+
 while true; do /usr/sbin/brass_gui; done
