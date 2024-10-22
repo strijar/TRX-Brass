@@ -2,4 +2,10 @@
 
 export PYTHONPATH="/usr/share/brass/python"
 
-while true; do /usr/sbin/brass_gui; done
+while true; do 
+    /usr/sbin/brass_gui;
+    if [ $? -eq 1 ]
+    then
+        exit 0
+    fi
+done
