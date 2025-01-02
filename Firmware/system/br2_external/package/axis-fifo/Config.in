@@ -1,0 +1,7 @@
+config BR2_PACKAGE_AXIS_FIFO
+	bool "axis-fifo"
+	depends on BR2_LINUX_KERNEL
+	help
+	  Xilinx AXI-Stream FIFO v4.1/v4.2 IP core driver
+
+	  https://github.com/jacobfeder/axisfifo
