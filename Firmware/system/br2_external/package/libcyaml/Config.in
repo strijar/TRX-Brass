@@ -1,0 +1,8 @@
+config BR2_PACKAGE_LIBCYAML
+	bool "libcyaml"
+	select BR2_PACKAGE_LIBYAML
+	help
+        LibCYAML is a C library for reading and writing structured YAML documents. 
+        It is written in ISO C11 and licensed under the ISC licence.
+
+        https://github.com/tlsa/libcyaml

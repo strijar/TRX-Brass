@@ -1,3 +1,4 @@
 source "$BR2_EXTERNAL_BRASS_PATH/package/axis-fifo/Config.in"
 source "$BR2_EXTERNAL_BRASS_PATH/package/rhvoice/Config.in"
 source "$BR2_EXTERNAL_BRASS_PATH/package/ext-liquid-dsp/Config.in"
+source "$BR2_EXTERNAL_BRASS_PATH/package/libcyaml/Config.in"
