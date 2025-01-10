@@ -1,0 +1,13 @@
+config BR2_PACKAGE_CODEC2
+	bool "codec2"
+	select BR2_PACKAGE_CODEC2
+	help
+        Codec 2 is an open source (LGPL 2.1) low bit rate speech codec: http://rowetel.com/codec2.html written in C99 standard C.
+
+        Also included:
+
+        The FreeDV API for digital voice over radio.
+        FreeDV is an open source digital voice protocol that integrates modems, codecs, 
+        and FEC README_freedv HF OFDM and FSK modems, FEC used in the FreeDV API
+        APIs for packet data over radio README_data
+        An STM32 embedded version of FreeDV 1600/700D/700E for the SM1000

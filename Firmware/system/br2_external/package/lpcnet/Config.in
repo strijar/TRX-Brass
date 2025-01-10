@@ -1,0 +1,10 @@
+config BR2_PACKAGE_LPCNET
+	bool "lpcnet"
+	select BR2_PACKAGE_LPCNET
+	help
+        LPCNet for FreeDV
+
+        Experimental version of LPCNet that has been used to develop FreeDV 2020 -
+        a HF radio Digital Voice mode for over the air experimentation with
+        Neural Net speech coding.
+        Possibly the first use of Neural Net speech coding in real world operation
