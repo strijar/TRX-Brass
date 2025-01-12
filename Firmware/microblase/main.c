@@ -25,12 +25,12 @@ int main() {
             volatile register float a0;
             volatile register float a1;
 
-            getfsl(a0, 0);  __real__ data.samples[i] = a0;
-            getfsl(a1, 0);  __imag__ data.samples[i] = a1;
-        }
+            getfsl(a0, 0);
+            getfsl(a1, 0);
 
-        for (uint32_t i = 0; i < MB_FFT_SIZE; i++)
-            data.samples[i] *= data.window[i];
+            __real__ data.samples[i] = a0 * data.window[i];
+            __imag__ data.samples[i] = a1 * data.window[i];
+        }
 
         tfft_fwd(MB_FFT, &data.samples, &data.factor);
 
