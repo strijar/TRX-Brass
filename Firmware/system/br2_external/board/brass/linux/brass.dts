@@ -159,8 +159,6 @@
 	mb_dbram {
 		compatible = "generic-uio";
 		reg = <0x43D10000 0x10000>;
-		interrupt-parent = <&intc>;
-		interrupts = <0 32 1>;
 	};
 
 	sound {

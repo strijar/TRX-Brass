@@ -15,9 +15,6 @@ static void window_hann() {
 }
 
 int main() {
-    volatile int    *gpio = 0x4000000;
-    uint32_t        avr = 0;
-
     data.count = 0;
 
     tfft_init(MB_FFT, &data.factor);
@@ -37,8 +34,6 @@ int main() {
 
         tfft_fwd(MB_FFT, &data.samples, &data.factor);
 
-        *gpio = 0;
-
         for (uint32_t i = 0; i < MB_FFT_SIZE; i++) {
             uint32_t        index = tfft_reverse_index(i, MB_FFT);
             complex float   x = data.samples[index];
@@ -49,7 +44,6 @@ int main() {
             data.out[i] = mag;
         }
 
-        *gpio = 1;
         data.count++;
     }
 
