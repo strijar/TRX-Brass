@@ -1,6 +1,5 @@
 config BR2_PACKAGE_CODEC2
 	bool "codec2"
-	select BR2_PACKAGE_CODEC2
 	help
         Codec 2 is an open source (LGPL 2.1) low bit rate speech codec: http://rowetel.com/codec2.html written in C99 standard C.
 

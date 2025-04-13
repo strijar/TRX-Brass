@@ -7,4 +7,4 @@ if [ ! -e ${BR_RELEASE}.tar.gz ]; then
   tar xf ${BR_RELEASE}.tar.gz
 fi
 
-make -C ${BR_RELEASE} BR2_EXTERNAL=../br2_external O=../output_brass  brass_defconfig
+make -C ${BR_RELEASE} BR2_EXTERNAL=../br2_external O=../output_brass  brass7020_defconfig

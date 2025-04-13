@@ -1,6 +1,5 @@
 config BR2_PACKAGE_LPCNET
 	bool "lpcnet"
-	select BR2_PACKAGE_LPCNET
 	help
         LPCNet for FreeDV
 

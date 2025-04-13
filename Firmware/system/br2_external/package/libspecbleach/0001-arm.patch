@@ -1,0 +1,14 @@
+--- a/meson.build	2025-04-13 11:56:04.203650241 +0300
++++ b/meson.build	2025-04-13 11:56:24.051456737 +0300
+@@ -7,10 +7,7 @@
+ # Shared c_args for libraries
+ lib_c_args = []
+ 
+-# Default x86 and x86_64 optimizations
+-if current_arch == 'x86' or current_arch == 'x86_64' and current_os != 'darwin'
+-    lib_c_args += ['-msse','-msse2','-mfpmath=sse','-ffast-math','-fomit-frame-pointer','-fno-finite-math-only']
+-endif
++lib_c_args += ['-ffast-math','-fomit-frame-pointer','-fno-finite-math-only']
+ 
+ # Dependencies for libspecbleach
+ m_dep = meson.get_compiler('c').find_library('m', required: true)
