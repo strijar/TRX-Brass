@@ -119,7 +119,7 @@
 			xlnx,all-outputs-2 = <0x0>;
 			xlnx,dout-default = <0x00000000>;
 			xlnx,dout-default-2 = <0x00000000>;
-			xlnx,gpio-width = <22>;
+			xlnx,gpio-width = <21>;
 			xlnx,gpio2-width = <32>;
 			xlnx,interrupt-present = <0x1>;
 			xlnx,is-dual = <0x0>;
@@ -127,7 +127,7 @@
 			xlnx,tri-default-2 = <0xFFFFFFFF>;
 
 			gpio-line-names =
-				"user2", "user3", "user4", "user5", "user6", "user7", "user8", 
+				"user2", "user3", "user4", "user5", "user6", "user8", 
 				"enc1_a", "enc1_b", "enc2_a", "enc2_b",
 				"adc_dith", "adc_pga", "adc_ofa",
 				"pwrbtn_on", "ext_pin1",
@@ -210,7 +210,7 @@
 
 	rotary@0 {
 		compatible = "rotary-encoder";
-		gpios = <&axi_gpio 7 0>, <&axi_gpio 8 0>;
+		gpios = <&axi_gpio 6 0>, <&axi_gpio 7 0>;
 		linux,axis = <0>;
 		rotary-encoder,encoding = "gray";
 		rotary-encoder,relative-axis;
@@ -218,7 +218,7 @@
 
 	rotary@1 {
 		compatible = "rotary-encoder";
-		gpios = <&axi_gpio 9 0>, <&axi_gpio 10 1>;
+		gpios = <&axi_gpio 8 0>, <&axi_gpio 9 1>;
 		linux,axis = <0>;
 		rotary-encoder,encoding = "gray";
 		rotary-encoder,relative-axis;
@@ -238,29 +238,30 @@
 		key-ptt {
 			label = "GPIO Key PTT";
 			linux,code = <KEY_CONNECT>;
-			gpios = <&axi_gpio 18 1>;
+			gpios = <&axi_gpio 17 1>;
 		};
 
 		key-power {
 			label = "GPIO Key Power";
 			linux,code = <KEY_POWER>;
-			gpios = <&axi_gpio 14 1>;
+			gpios = <&axi_gpio 13 1>;
 		};
 	};
 
-    /*
+	/*
 	control_regs: axi@43c30000 {
 		compatible = "syscon";
-		reg = <0x43c30000 0x1000>;
+		reg = <0x43C30000 0x1000>;
 	};
 
 	poweroff {
 		compatible = "syscon-poweroff";
-		regmap = <&control_regs>;
+		regmap = <&trx_regs>;
 		offset = <0x00>;
-		mask = <0x1>;
+		mask = <0x1F>;
 	};
-    */
+	*/
+
 };
 
 &gem0 {
@@ -278,8 +279,8 @@
 };
 
 &i2c0 {
-	clock-frequency = <40000>;
 	status = "okay";
+	clock-frequency = <400000>;
 
 	rtc@68 {
 	    compatible = "maxim,ds3231";
@@ -361,9 +362,24 @@
 		reg = <0x20>;
 		gpio-controller;
 		#gpio-cells = <2>;
-		gpio-line-names = 
-			"BPF_LF", "BPF_40", "BPF_160", "BPF_80", "BPF_30_20", "BPF_17_15", "BPF_12_20", "BPF_6",
-			"BPF_0_60", "ATT_16", "ATT_0.5", "ATT_1", "ATT_2", "ATT_4", "ATT_8", "HF_LNA";
+		gpio-line-names =
+			"bpf_lf",
+			"bpf_40",
+			"bpf_160",
+			"bpf_80",
+			"bpf_30_20",
+			"bpf_17_15",
+			"bpf_12_10",
+			"bpf_6",
+
+			"bpf_0_60",
+			"att_16",
+			"att_0.5",
+			"att_1",
+			"att_2",
+			"att_4",
+			"att_8",
+			"hf_lna";
 	};
 
     /* U2 */
@@ -373,9 +389,24 @@
 		reg = <0x21>;
 		gpio-controller;
 		#gpio-cells = <2>;
-		gpio-line-names = 
-			"ADF_CLK", "ADF_DATA", "ADF_LE", "VHF/UHF_RX_TX", "XVRT_HF_VHF/UHF", "", "RELAY_LPF_VHF/UHF", "RELAY_VHF/UHF_RX_TX",
-			"", "", "RELAY_HF_RX_TX", "RELAY_SWAP_C", "SEL_VHF/UHF", "", "", "";
+		gpio-line-names =
+			"adf_clk",
+			"adf_data",
+			"adf_le",
+			"vhf/uhf_rx_tx",
+			"xvrt_hf_vhf/uhf",
+			"xvrt_vhf/uhf",
+			"relay_lpf_vhf/uhf",
+			"relay_vhf/uhf_rx_tx",
+
+			"xvrt_vhf/uhf_rx_tx",
+			"",
+			"relay_hf_rx_tx",
+			"relay_hf_vhf/uhf",
+			"sel_vhf/uhf",
+			"",
+			"",
+			"";
 	};
 
     /* U3 */
@@ -385,9 +416,24 @@
 		reg = <0x22>;
 		gpio-controller;
 		#gpio-cells = <2>;
-		gpio-line-names = 
-			"", "LPF_160", "LPF_80", "LPF_40", "LPF_20", "LPF_15", "LPF_10", "LPF_6",
-			"L_07", "L_06", "L_05", "L_04", "L_03", "L_02", "L_01", "";
+		gpio-line-names =
+			"hf_tx",
+			"lpf_160",
+			"lpf_80",
+			"lpf_40",
+			"lpf_20",
+			"lpf_15",
+			"lpf_10",
+			"lpf_6",
+
+			"l_07",
+			"l_06",
+			"l_05",
+			"l_04",
+			"l_03",
+			"l_02",
+			"l_01",
+			"";
 	};
 
     /* U28 */
@@ -397,9 +443,24 @@
 		reg = <0x24>;
 		gpio-controller;
 		#gpio-cells = <2>;
-		gpio-line-names = 
-			"C_01", "C_06", "C_05", "C_04", "BAND_3", "BAND_1", "BAND_0", "BAND_2",
-			"RELAY_HF_VHF/UHF", "C_02", "C_03", "C_07", "", "PTT_EXT", "", "";
+		gpio-line-names =
+			"c_01",
+			"c_06",
+			"c_05",
+			"c_04",
+			"band_3",
+			"band_1",
+			"band_0",
+			"band_2",
+
+			"relay_swap_c",
+			"c_02",
+			"c_03",
+			"c_07",
+			"",
+			"ptt_ext",
+			"",
+			"";
 	};
 
 	tx_bias_a: bias@2d {
@@ -410,6 +471,28 @@
 	tx_bias_b: bias@2c {
 		compatible = "ad5245";
 		reg = <0x2c>;
+	};
+
+	ina3221@40 {
+		compatible = "ti,ina3221";
+		reg = <0x40>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		input@0 {
+			reg = <0x0>;
+			shunt-resistor-micro-ohms = <5000>;
+			label = "12V";
+		};
+		input@1 {
+			reg = <0x1>;
+			shunt-resistor-micro-ohms = <5000>;
+			label = "PA";
+		};
+		input@2 {
+			reg = <0x2>;
+			status = "disabled";
+		};
 	};
 };
 
