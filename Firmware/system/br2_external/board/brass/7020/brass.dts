@@ -1,5 +1,6 @@
 /dts-v1/;
 
+#include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/input/input.h>
 #include <dt-bindings/interrupt-controller/irq.h>
 #include <dt-bindings/dma/axi-dmac.h>
@@ -261,7 +262,6 @@
 		mask = <0x1F>;
 	};
 	*/
-
 };
 
 &gem0 {
@@ -280,7 +280,7 @@
 
 &i2c0 {
 	status = "okay";
-	clock-frequency = <400000>;
+	clock-frequency = <100000>;
 
 	rtc@68 {
 	    compatible = "maxim,ds3231";
@@ -393,17 +393,17 @@
 			"adf_clk",
 			"adf_data",
 			"adf_le",
-			"vhf/uhf_rx_tx",
-			"xvrt_hf_vhf/uhf",
-			"xvrt_vhf/uhf",
-			"relay_lpf_vhf/uhf",
-			"relay_vhf/uhf_rx_tx",
+			"k39",
+			"k37",
+			"k38",
+			"k32_k33",
+			"k34",
 
-			"xvrt_vhf/uhf_rx_tx",
+			"k41",
 			"",
-			"relay_hf_rx_tx",
-			"relay_hf_vhf/uhf",
-			"sel_vhf/uhf",
+			"k23",
+			"k22",
+			"k40",
 			"",
 			"",
 			"";
@@ -453,7 +453,7 @@
 			"band_0",
 			"band_2",
 
-			"relay_swap_c",
+			"k24",
 			"c_02",
 			"c_03",
 			"c_07",
@@ -495,6 +495,7 @@
 		};
 	};
 };
+
 
 &intc {
 	num_cpus = <2>;
