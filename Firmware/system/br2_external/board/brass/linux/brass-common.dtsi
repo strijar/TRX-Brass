@@ -1,0 +1,549 @@
+/dts-v1/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+#include <dt-bindings/interrupt-controller/irq.h>
+#include <dt-bindings/dma/axi-dmac.h>
+
+#include "zynq-7000.dtsi"
+
+/ {
+	model = "TRX Brass zynq-7020";
+	compatible = "xlnx,zynq-7000";
+
+	chosen {
+		bootargs = "earlycon";
+		stdout-path = "serial0:115200n8";
+	};
+
+	aliases {
+		ethernet0 = &gem0;
+		serial0 = &uart0;
+		i2c0 = &i2c0;
+		spi0 = &qspi;
+		mmc0 = &sdhci0;
+		mmc1 = &sdhci1;
+	};
+
+	memory {
+		device_type = "memory";
+		reg = <0x0 0x40000000>;
+	};
+
+	amba_pl: amba_pl {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "simple-bus";
+		ranges ;
+
+		framebuffer {
+			compatible = "r1cbu,vdmafb";
+			reg = <0x43000000 0x10000>;
+			width = <800>;
+			height = <480>;
+		};
+
+		axi_clk: axi_clk {
+			#clock-cells = <0>;
+			compatible = "fixed-clock";
+			clock-frequency = <122880000>;
+			clock-output-names = "axi_clk";
+		};
+
+		i2s_clk: i2s_clk {
+			#clock-cells = <0>;
+			compatible = "fixed-clock";
+			clock-frequency = <12288000>;
+			clock-output-names = "i2s_clk";
+		};
+
+		trx_fifo: axi_fifo_mm_s@43c10000 {
+			clock-names = "axi_clk";
+			clocks = <&axi_clk>;
+			compatible = "xlnx,axi-fifo-mm-s-4.2";
+			interrupt-names = "interrupt";
+			interrupt-parent = <&intc>;
+			interrupts = <0 31 1>;
+
+			reg = <0x43c10000 0x10000>;
+			xlnx,axi-str-rxd-protocol = "XIL_AXI_STREAM_ETH_DATA";
+			xlnx,axi-str-rxd-tdata-width = <0x20>;
+			xlnx,axi-str-txc-protocol = "XIL_AXI_STREAM_ETH_CTRL";
+			xlnx,axi-str-txc-tdata-width = <0x20>;
+			xlnx,axi-str-txd-protocol = "XIL_AXI_STREAM_ETH_DATA";
+			xlnx,axi-str-txd-tdata-width = <0x20>;
+			xlnx,axis-tdest-width = <0x4>;
+			xlnx,axis-tid-width = <0x4>;
+			xlnx,axis-tuser-width = <0x4>;
+			xlnx,data-interface-type = <0x0>;
+			xlnx,has-axis-tdest = <0x0>;
+			xlnx,has-axis-tid = <0x0>;
+			xlnx,has-axis-tkeep = <0x1>;
+			xlnx,has-axis-tstrb = <0x0>;
+			xlnx,has-axis-tuser = <0x0>;
+			xlnx,rx-cascade-height = <0x0>;
+			xlnx,rx-fifo-depth = <0x200>;
+			xlnx,rx-fifo-pe-threshold = <0x20>;
+			xlnx,rx-fifo-pf-threshold = <0x100>;
+			xlnx,s-axi-id-width = <0x4>;
+			xlnx,s-axi4-data-width = <0x20>;
+			xlnx,select-xpm = <0x0>;
+			xlnx,tx-cascade-height = <0x0>;
+			xlnx,tx-fifo-depth = <0x200>;
+			xlnx,tx-fifo-pe-threshold = <0x80>;
+			xlnx,tx-fifo-pf-threshold = <0x100>;
+			xlnx,use-rx-cut-through = <0x0>;
+			xlnx,use-rx-data = <0x1>;
+			xlnx,use-tx-ctrl = <0x0>;
+			xlnx,use-tx-cut-through = <0x0>;
+			xlnx,use-tx-data = <0x1>;
+
+			xlnx,rx-min-pkt-size = <128>;
+			xlnx,tx-max-pkt-size = <128>;
+		};
+
+		axi_gpio: gpio@41200000 {
+			#gpio-cells = <2>;
+			#interrupt-cells = <2>;
+			clock-names = "axi_clk";
+			clocks = <&axi_clk>;
+			compatible = "xlnx,axi-gpio-2.0", "xlnx,xps-gpio-1.00.a";
+			gpio-controller ;
+			interrupt-controller ;
+			interrupt-names = "ip2intc_irpt";
+			interrupt-parent = <&intc>;
+			interrupts = <0 29 4>;
+			reg = <0x41200000 0x10000>;
+			xlnx,all-inputs = <0x0>;
+			xlnx,all-inputs-2 = <0x0>;
+			xlnx,all-outputs = <0x0>;
+			xlnx,all-outputs-2 = <0x0>;
+			xlnx,dout-default = <0x00000000>;
+			xlnx,dout-default-2 = <0x00000000>;
+			xlnx,gpio-width = <21>;
+			xlnx,gpio2-width = <32>;
+			xlnx,interrupt-present = <0x1>;
+			xlnx,is-dual = <0x0>;
+			xlnx,tri-default = <0xFFFFFFFF>;
+			xlnx,tri-default-2 = <0xFFFFFFFF>;
+
+			gpio-line-names =
+				"user2", "user3", "user4", "user5", "user6", "user8", 
+				"enc1_a", "enc1_b", "enc2_a", "enc2_b",
+				"adc_dith", "adc_pga", "adc_ofa",
+				"pwrbtn_on", "ext_pin1",
+				"cw_dot", "cw_dash", "ptt_in",
+				"charge_pump", "preamp_on", "tx_out";
+		};
+
+		axi_i2s: i2s@43c00000 {
+			reg = <0x43C00000 0x10000>;
+			#sound-dai-cells = <0>;
+			compatible = "adi,axi-i2s-1.00.a";
+			clocks = <&i2s_clk>, <&axi_clk>;
+			clock-names = "ref", "axi";
+			dmas = <&dmac_s 0>, <&dmac_s 1>;
+			dma-names = "rx", "tx";
+		};
+	};
+
+	trx_regs {
+		compatible = "generic-uio";
+		reg = <0x43C20000 0x10000>;
+	};
+
+	mb_ibram {
+		compatible = "generic-uio";
+		reg = <0x43D00000 0x10000>;
+	};
+
+	mb_dbram {
+		compatible = "generic-uio";
+		reg = <0x43D10000 0x10000>;
+	};
+
+	sound {
+		compatible = "simple-audio-card";
+		simple-audio-card,name = "Brass-Sound-Card";
+		simple-audio-card,format = "i2s";
+
+		simple-audio-card,routing =
+			"Headphones", "LHP",
+			"Headphones", "RHP",
+			"Speaker", "LSPK",
+			"Speaker", "RSPK",
+			"Line Out", "AUXOUT1",
+			"Line Out", "AUXOUT2",
+			"LAUX", "Line In",
+			"RAUX", "Line In",
+			"LMICP", "Mic In",
+			"RMICP", "Mic In";
+
+		simple-audio-card,widgets =
+			"Headphones", "Headphones",
+			"Line Out", "Line Out",
+			"Speaker", "Speaker",
+			"Microphone", "Mic In",
+			"Line", "Line In";
+
+		simple-audio-card,cpu {
+			sound-dai = <&axi_i2s>;
+		};
+
+		simple-audio-card,codec {
+			sound-dai = <&codec>;
+		};
+	};
+
+	usb_phy0: phy0@e0002000 {
+		compatible = "ulpi-phy";
+		#phy-cells = <0>;
+		reg = <0xe0002000 0x1000>;
+		view-port = <0x0170>;
+		drv-vbus;
+	};
+
+	cpus {
+		cpu@0 {
+			operating-points = <766666 1000000 383333 1000000>;
+		};
+	};
+
+	rotary@0 {
+		compatible = "rotary-encoder";
+		gpios = <&axi_gpio 6 0>, <&axi_gpio 7 0>;
+		linux,axis = <0>;
+		rotary-encoder,encoding = "gray";
+		rotary-encoder,relative-axis;
+	};
+
+	rotary@1 {
+		compatible = "rotary-encoder";
+		gpios = <&axi_gpio 8 0>, <&axi_gpio 9 1>;
+		linux,axis = <0>;
+		rotary-encoder,encoding = "gray";
+		rotary-encoder,relative-axis;
+	};
+
+	rotary@2 {
+		compatible = "rotary-encoder";
+		gpios = <&gpio0 12 0>, <&gpio0 13 0>;
+		linux,axis = <0>;
+		rotary-encoder,encoding = "gray";
+		rotary-encoder,relative-axis;
+	};
+
+	gpio-keys {
+		compatible = "gpio-keys";
+
+		key-ptt {
+			label = "GPIO Key PTT";
+			linux,code = <KEY_CONNECT>;
+			gpios = <&axi_gpio 17 1>;
+		};
+
+		key-power {
+			label = "GPIO Key Power";
+			linux,code = <KEY_POWER>;
+			gpios = <&axi_gpio 13 1>;
+		};
+	};
+
+	/*
+	control_regs: axi@43c30000 {
+		compatible = "syscon";
+		reg = <0x43C30000 0x1000>;
+	};
+
+	poweroff {
+		compatible = "syscon-poweroff";
+		regmap = <&trx_regs>;
+		offset = <0x00>;
+		mask = <0x1F>;
+	};
+	*/
+};
+
+&gem0 {
+	enet-reset = <&gpio0 7 0>;
+	phy-mode = "rgmii-id";
+	status = "okay";
+	xlnx,ptp-enet-clock = <0x79dbbf3>;
+	local-mac-address = [46 28 FA DA 2F 4B];
+};
+
+&gpio0 {
+	emio-gpio-width = <64>;
+	gpio-mask-high = <0x0>;
+	gpio-mask-low = <0x5600>;
+};
+
+&i2c0 {
+	status = "okay";
+	clock-frequency = <100000>;
+
+	rtc@68 {
+	    compatible = "maxim,ds3231";
+	    reg = <0x68>;
+	};
+
+	mcp4725@60 {
+		compatible = "microchip,mcp4725";
+		reg = <0x60>;
+	};
+
+	ads1015@49 {
+		compatible = "ti,ads1015";
+		reg = <0x49>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		channel@0 {
+			reg = <4>;
+			ti,datarate = <0>;
+			ti,gain = <1>;
+		};
+
+		channel@1 {
+			reg = <5>;
+			ti,datarate = <0>;
+			ti,gain = <1>;
+		};
+
+		channel@2 {
+			reg = <6>;
+			ti,datarate = <0>;
+			ti,gain = <1>;
+		};
+
+		channel@3 {
+			reg = <7>;
+			ti,datarate = <0>;
+			ti,gain = <1>;
+		};
+	};
+
+	codec: nau8822@1a {
+		compatible = "nuvoton,nau8822";
+		#sound-dai-cells = <0>;
+		reg = <0x1a>;
+	};
+
+	keypad@34 {
+		compatible = "ti,tca8418";
+		reg = <0x34>;
+		interrupt-parent = <&gpio0>;
+		interrupts = <10 IRQ_TYPE_EDGE_FALLING>;
+		linux,keymap = < 
+			MATRIX_KEY(0x03, 0x02, BTN_NORTH)
+
+			MATRIX_KEY(0x03, 0x03, KEY_1)
+			MATRIX_KEY(0x03, 0x01, KEY_2)
+			MATRIX_KEY(0x03, 0x00, KEY_3)
+
+			MATRIX_KEY(0x00, 0x03, BTN_SOUTH)
+
+			MATRIX_KEY(0x00, 0x01, KEY_F1)
+			MATRIX_KEY(0x00, 0x02, KEY_F2)
+			MATRIX_KEY(0x02, 0x00, KEY_F3)
+			MATRIX_KEY(0x02, 0x01, KEY_F4)
+			MATRIX_KEY(0x02, 0x02, KEY_F5)
+			MATRIX_KEY(0x02, 0x03, KEY_F6)
+
+			MATRIX_KEY(0x01, 0x00, KEY_A)
+			MATRIX_KEY(0x01, 0x01, KEY_B)
+			MATRIX_KEY(0x01, 0x02, KEY_C)
+			MATRIX_KEY(0x01, 0x03, KEY_D)
+		>;
+		keypad,num-rows = <4>;
+		keypad,num-columns = <4>;
+	};
+
+    /* U1 */
+
+	rf_gpio1: gpio@20 {
+		compatible = "pcf8575";
+		reg = <0x20>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		gpio-line-names =
+			"bpf_lf",
+			"bpf_40",
+			"bpf_160",
+			"bpf_80",
+			"bpf_30_20",
+			"bpf_17_15",
+			"bpf_12_10",
+			"bpf_6",
+
+			"bpf_0_60",
+			"att_16",
+			"att_0.5",
+			"att_1",
+			"att_2",
+			"att_4",
+			"att_8",
+			"hf_lna";
+	};
+
+    /* U2 */
+
+	rf_gpio2: gpio@21 {
+		compatible = "pcf8575";
+		reg = <0x21>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		gpio-line-names =
+			"adf_clk",
+			"adf_data",
+			"adf_le",
+			"k39",
+			"k37",
+			"k38",
+			"k32_k33",
+			"k34",
+
+			"k41",
+			"",
+			"k23",
+			"k22",
+			"k40",
+			"",
+			"",
+			"";
+	};
+
+    /* U3 */
+
+	rf_gpio3: gpio@22 {
+		compatible = "pcf8575";
+		reg = <0x22>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		gpio-line-names =
+			"hf_tx",
+			"lpf_160",
+			"lpf_80",
+			"lpf_40",
+			"lpf_20",
+			"lpf_15",
+			"lpf_10",
+			"lpf_6",
+
+			"l_07",
+			"l_06",
+			"l_05",
+			"l_04",
+			"l_03",
+			"l_02",
+			"l_01",
+			"";
+	};
+
+    /* U28 */
+
+	rf_gpio4: gpio@24 {
+		compatible = "pcf8575";
+		reg = <0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		gpio-line-names =
+			"c_01",
+			"c_06",
+			"c_05",
+			"c_04",
+			"band_3",
+			"band_1",
+			"band_0",
+			"band_2",
+
+			"k24",
+			"c_02",
+			"c_03",
+			"c_07",
+			"",
+			"ptt_ext",
+			"",
+			"";
+	};
+
+	tx_bias_a: bias@2d {
+		compatible = "ad5245";
+		reg = <0x2d>;
+	};
+
+	tx_bias_b: bias@2c {
+		compatible = "ad5245";
+		reg = <0x2c>;
+	};
+
+	ina3221@40 {
+		compatible = "ti,ina3221";
+		reg = <0x40>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		input@0 {
+			reg = <0x0>;
+			shunt-resistor-micro-ohms = <5000>;
+			label = "12V";
+		};
+		input@1 {
+			reg = <0x1>;
+			shunt-resistor-micro-ohms = <5000>;
+			label = "PA";
+		};
+		input@2 {
+			reg = <0x2>;
+			status = "disabled";
+		};
+	};
+};
+
+
+&intc {
+	num_cpus = <2>;
+	num_interrupts = <96>;
+	status = "okay";
+};
+
+&qspi {
+	is-dual = <0>;
+	num-cs = <1>;
+	spi-rx-bus-width = <4>;
+	spi-tx-bus-width = <4>;
+	status = "disabled";
+};
+
+&sdhci0 {
+	status = "okay";
+	xlnx,has-cd = <0x0>;
+	xlnx,has-power = <0x0>;
+	xlnx,has-wp = <0x0>;
+};
+
+&sdhci1 {
+	status = "okay";
+	xlnx,has-cd = <0x0>;
+	xlnx,has-power = <0x0>;
+	xlnx,has-wp = <0x0>;
+};
+
+&uart0 {
+	cts-override ;
+	device_type = "serial";
+	port-number = <0>;
+	status = "okay";
+};
+
+&usb0 {
+	status = "okay";
+	usb-reset = <&gpio0 8 0>;
+	dr_mode = "host";
+	usb-phy = <&usb_phy0>;
+};
+
+&clkc {
+	fclk-enable = <0x3>;
+	ps-clk-frequency = <33333333>;
+};
