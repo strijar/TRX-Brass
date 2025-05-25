@@ -1,0 +1,10 @@
+config BR2_PACKAGE_BRASS_GUI
+    bool "brass_gui"
+    select BR2_AXIS_FIFO
+    select BR2_PACKAGE_EXT_LIQUID_DSP
+    select BR2_PACKAGE_LIBCYAML
+    select BR2_PACKAGE_LIBSPECBLEACH
+    select BR2_PACKAGE_RHVOICE
+    select BR2_PACKAGE_LIBPNG
+    help
+      Brass GUI application
