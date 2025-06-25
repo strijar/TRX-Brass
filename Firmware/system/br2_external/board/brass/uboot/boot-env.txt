@@ -2,10 +2,8 @@ arch=arm
 baudrate=115200
 board=zynq
 board_name=zynq
-boot_a_script=load ${devtype} ${devnum}:${distro_bootpart} ${scriptaddr} ${prefix}${script}; source ${scriptaddr}
-boot_efi_binary=load ${devtype} ${devnum}:${distro_bootpart} ${kernel_addr_r} efi/boot/bootarm.efi; if fdt addr -q ${fdt_addr_r}; then bootefi ${kernel_addr_r} ${fdt_addr_r};else bootefi ${kernel_addr_r} ${fdtcontroladdr};fi
-boot_efi_bootmgr=if fdt addr -q ${fdt_addr_r}; then bootefi bootmgr ${fdt_addr_r};else bootefi bootmgr;fi
-boot_extlinux=sysboot ${devtype} ${devnum}:${distro_bootpart} any ${scriptaddr} ${prefix}${boot_syslinux_conf}
+boot_a_script=run fpga_load; load ${devtype} ${devnum}:${distro_bootpart} ${scriptaddr} ${prefix}${script}; source ${scriptaddr}
+boot_extlinux=run fpga_load; sysboot ${devtype} ${devnum}:${distro_bootpart} any ${scriptaddr} ${prefix}${boot_syslinux_conf}
 boot_net_usb_start=usb start
 boot_prefixes=/ /boot/
 boot_script_dhcp=boot.scr.uimg
@@ -13,28 +11,25 @@ boot_scripts=boot.scr.uimg boot.scr
 boot_syslinux_conf=extlinux/extlinux.conf
 boot_targets=mmc0 mmc1
 bootcmd=run distro_bootcmd
-bootcmd_mmc0=devnum=0; run fpga_load; run mmc_boot
-bootcmd_mmc1=devnum=1; run fpga_load; run mmc_boot
+bootcmd_mmc0=devnum=0; run mmc_boot;
+bootcmd_mmc1=devnum=1; run mmc_boot;
+bootcmd_usb0=devnum=0; run usb_boot;
 bootdelay=2
 bootm_low=0
 bootm_size=20000000
 cpu=armv7
 distro_bootcmd=for target in ${boot_targets}; do run bootcmd_${target}; done
-efi_dtb_prefixes=/ /dtb/ /dtb/current/
 fdt_addr_r=0x1f00000
 fdtcontroladdr=1ead7a50
 fileaddr=4000000
-fpga_load=fatload mmc ${devnum} 0x03000000 system.bit && fpga loadb 0 0x03000000 ${filesize}
+fpga_load=fatload ${devtype} ${devnum} 0x03000000 system.bit && fpga loadb 0 0x03000000 ${filesize}
 kernel_addr_r=0x2000000
-load_efi_dtb=load ${devtype} ${devnum}:${distro_bootpart} ${fdt_addr_r} ${prefix}${efi_fdtfile}
 loadaddr=0x0
 mmc_boot=if mmc dev ${devnum}; then devtype=mmc; run scan_dev_for_boot_part; fi
 modeboot=sdboot
-pxefile_addr_r=0x2000000
 ramdisk_addr_r=0x3100000
 scan_dev_for_boot=echo Scanning ${devtype} ${devnum}:${distro_bootpart}...; for prefix in ${boot_prefixes}; do run scan_dev_for_extlinux; run scan_dev_for_scripts; done;run scan_dev_for_efi;
 scan_dev_for_boot_part=part list ${devtype} ${devnum} -bootable devplist; env exists devplist || setenv devplist 1; for distro_bootpart in ${devplist}; do if fstype ${devtype} ${devnum}:${distro_bootpart} bootfstype; then run scan_dev_for_boot; fi; done; setenv devplist
-scan_dev_for_efi=setenv efi_fdtfile ${fdtfile}; if test -z "${fdtfile}" -a -n "${soc}"; then setenv efi_fdtfile ${soc}-${board}${boardver}.dtb; fi; for prefix in ${efi_dtb_prefixes}; do if test -e ${devtype} ${devnum}:${distro_bootpart} ${prefix}${efi_fdtfile}; then run load_efi_dtb; fi;done;run boot_efi_bootmgr;if test -e ${devtype} ${devnum}:${distro_bootpart} efi/boot/bootarm.efi; then echo Found EFI removable media binary efi/boot/bootarm.efi; run boot_efi_binary; echo EFI LOAD FAILED: continuing...; fi; setenv efi_fdtfile
 scan_dev_for_extlinux=if test -e ${devtype} ${devnum}:${distro_bootpart} ${prefix}${boot_syslinux_conf}; then echo Found ${prefix}${boot_syslinux_conf}; run boot_extlinux; echo EXTLINUX FAILED: continuing...; fi
 scan_dev_for_scripts=for script in ${boot_scripts}; do if test -e ${devtype} ${devnum}:${distro_bootpart} ${prefix}${script}; then echo Found U-Boot script ${prefix}${script}; run boot_a_script; echo SCRIPT FAILED: continuing...; fi; done
 script_offset_f=fc0000
