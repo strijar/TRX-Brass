@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RHVOICE_VERSION = ed7bf65b6861281b2a0f168a148200f870036164
+RHVOICE_VERSION = 1.14.0
 RHVOICE_SITE = https://github.com/RHVoice/RHVoice.git
 RHVOICE_LICENSE = GPLv2
 RHVOICE_SITE_METHOD = git
