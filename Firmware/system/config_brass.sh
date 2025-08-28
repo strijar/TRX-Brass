@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 BR_RELEASE="buildroot-2024.02"
 
