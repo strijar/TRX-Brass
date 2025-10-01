@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BRASS_GUI_VERSION = 27e5fe9
+BRASS_GUI_VERSION = 2852a1c
 BRASS_GUI_SITE = https://github.com/strijar/brass_gui
 BRASS_GUI_SITE_METHOD = git
 BRASS_GUI_GIT_SUBMODULES = YES

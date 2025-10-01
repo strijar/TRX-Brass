@@ -397,20 +397,20 @@
 			"adf_clk",
 			"adf_data",
 			"adf_le",
-			"k39",
-			"k37",
-			"k38",
-			"k32_k33",
-			"k34",
+			"k39",          /* VHF/UHF_RX_TX        */
+			"k37",          /* XVRT_HF_VHF/UHF      */
+			"k38",          /* XVRT_VHF/UHF         */
+			"k32_k33",      /* RELAY_LPF_VHF/UHF    */
+			"k34",          /* RELAY_VHF_UHF_RX_TX  */
 
-			"k41",
+			"k41",          /* XVRT_VHF/UHF_RX_TX   */
+			"k42",          /* TX_430_TX            */
+			"k23",          /* RELAY_HF_RX_TX       */
+			"k22",          /* RELAY_HF_VHF/UHF     */
+			"k40",          /* SEL_VHF/UHF          */
 			"",
-			"k23",
-			"k22",
-			"k40",
-			"",
-			"",
-			"";
+			"rx_144",       /* RX_144_RX            */
+			"rx_430";       /* RX_430_RX            */
 	};
 
     /* U3 */

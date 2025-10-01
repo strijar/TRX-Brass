@@ -5,6 +5,7 @@
 
 BOARD_DIR="${BR2_EXTERNAL_BRASS_PATH}/board/brass"
 
+rm -rf "${BINARIES_DIR}/settings"
 cp -r "${TARGET_DIR}/mnt/settings/" "${BINARIES_DIR}/settings"
 
 install -m 0644 -D "${BOARD_DIR}/extlinux.conf" "${BINARIES_DIR}/extlinux/extlinux.conf"
