@@ -313,13 +313,13 @@
 		channel@2 {
 			reg = <6>;
 			ti,datarate = <0>;
-			ti,gain = <1>;
+			ti,gain = <3>;
 		};
 
 		channel@3 {
 			reg = <7>;
 			ti,datarate = <0>;
-			ti,gain = <1>;
+			ti,gain = <3>;
 		};
 	};
 
