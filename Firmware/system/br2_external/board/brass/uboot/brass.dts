@@ -11,6 +11,7 @@
 
 	aliases {
 		serial0 = &uart0;
+		i2c0 = &i2c0;
 		mmc0 = &sdhci0;
 	};
 
@@ -64,4 +65,51 @@
 &uart0 {
 	u-boot,dm-pre-reloc;
 	status = "okay";
+};
+
+&i2c0 {
+	status = "okay";
+	clock-frequency = <100000>;
+
+	/*
+	 * PCF8575 has no register address: send exactly two data bytes.
+	 * I2C0 is routed through PL (EMIO), so do not use early GPIO hogs.
+	 * boot-env.txt resets these outputs after loading system.bit.
+	 * Match the driver's software latch to that all-low state.
+	 */
+	rf_gpio1: gpio@20 {
+		compatible = "nxp,pcf8575";
+		reg = <0x20>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		u-boot,i2c-offset-len = <0>;
+		lines-initial-states = <0xffff>;
+	};
+
+	rf_gpio2: gpio@21 {
+		compatible = "nxp,pcf8575";
+		reg = <0x21>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		u-boot,i2c-offset-len = <0>;
+		lines-initial-states = <0xffff>;
+	};
+
+	rf_gpio3: gpio@22 {
+		compatible = "nxp,pcf8575";
+		reg = <0x22>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		u-boot,i2c-offset-len = <0>;
+		lines-initial-states = <0xffff>;
+	};
+
+	rf_gpio4: gpio@24 {
+		compatible = "nxp,pcf8575";
+		reg = <0x24>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		u-boot,i2c-offset-len = <0>;
+		lines-initial-states = <0xffff>;
+	};
 };

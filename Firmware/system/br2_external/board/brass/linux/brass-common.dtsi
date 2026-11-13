@@ -363,6 +363,8 @@
 
 	rf_gpio1: gpio@20 {
 		compatible = "pcf8575";
+		/* Match the all-low output latch initialized by U-Boot. */
+		lines-initial-states = <0xffff>;
 		reg = <0x20>;
 		gpio-controller;
 		#gpio-cells = <2>;
@@ -390,6 +392,8 @@
 
 	rf_gpio2: gpio@21 {
 		compatible = "pcf8575";
+		/* Match the all-low output latch initialized by U-Boot. */
+		lines-initial-states = <0xffff>;
 		reg = <0x21>;
 		gpio-controller;
 		#gpio-cells = <2>;
@@ -417,6 +421,8 @@
 
 	rf_gpio3: gpio@22 {
 		compatible = "pcf8575";
+		/* Match the all-low output latch initialized by U-Boot. */
+		lines-initial-states = <0xffff>;
 		reg = <0x22>;
 		gpio-controller;
 		#gpio-cells = <2>;
@@ -444,6 +450,8 @@
 
 	rf_gpio4: gpio@24 {
 		compatible = "pcf8575";
+		/* Match the all-low output latch initialized by U-Boot. */
+		lines-initial-states = <0xffff>;
 		reg = <0x24>;
 		gpio-controller;
 		#gpio-cells = <2>;

@@ -1,0 +1,45 @@
+Subject: [PATCH] i2c: cdns: do not skip the first message on arbitration retry
+
+The for-loop increment runs after continue, undoing the reset of msg and
+nmsgs. A single-message transfer exits with -EAGAIN after the first loss;
+a multi-message transfer skips its first message on retry. Advance only
+after success. Clear stale interrupt status when restarting, since the
+receive path checks ARBLOST before receiving data.
+
+Upstream-Status: Pending
+
+--- a/drivers/i2c/i2c-cdns.c
++++ b/drivers/i2c/i2c-cdns.c
+@@ -442,7 +442,7 @@
+ 
+ 	debug("i2c_xfer: %d messages\n", nmsgs);
+ 	for (u8 retry = 0; retry < CDNS_I2C_ARB_LOST_MAX_RETRIES &&
+-	     nmsgs > 0; nmsgs--, msg++) {
++	     nmsgs > 0;) {
+ 		debug("i2c_xfer: chip=0x%x, len=0x%x\n", msg->addr, msg->len);
+ 		if (msg->flags & I2C_M_RD) {
+ 			ret = cdns_i2c_read_data(i2c_bus, msg->addr, msg->buf,
+@@ -452,8 +452,12 @@
+ 						  msg->len);
+ 		}
+ 		if (ret == -EAGAIN) {
++			/* Restart the whole transfer without advancing past msg[0]. */
+ 			msg = message;
+ 			nmsgs = num_msgs;
++			/* Reads also need the previous arbitration status cleared. */
++			writel(CDNS_I2C_INTERRUPTS_MASK,
++			       &i2c_bus->regs->interrupt_status);
+ 			retry++;
+ 			printf("%s,arbitration lost, retrying:%d\n", __func__,
+ 			       retry);
+@@ -464,6 +468,10 @@
+ 			debug("i2c_write: error sending\n");
+ 			return -EREMOTEIO;
+ 		}
++
++		/* Only completed messages may advance the transfer. */
++		nmsgs--;
++		msg++;
+ 	}
+ 
+ 	return ret;
